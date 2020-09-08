@@ -14,6 +14,14 @@ int world_init_game()
     grid_rows       = SCREEN_HEIGHT / tile_size;
     grid_cols       = SCREEN_WIDTH / tile_size;
 
+    /*
+        Init move speed based on scale
+
+        divide tile size by number of frames of animation. More
+        frames results in slower movement.
+    */
+    move_speed      = tile_size / MOVE_UPDATES;
+
     if(init_sdl() != 0)
     {
         return EXIT_FAILURE;
@@ -29,19 +37,21 @@ int world_init_game()
 int world_main_loop(void)
 {
     /*
-        Init move speed based on scale
+        load a test area map
 
-        divide tile size by number of frames of animation. More
-        frames results in slower movement.
+        Eventually this will be fed a map name from
+        a loaded savegame file.
     */
-    move_speed = tile_size / 12;
-
-    /* load a test area map */
     AreaMap* _area_map = world_load_area("testmap1f");
 
-    /* Init the hero */
+    /*
+        Init the hero
+
+        This will also be initialized from a loaded
+        savegame file.
+    */
     Actor* _hero = actor_new("Buns", HERO, 0, false, 1, 1, tile_size);
-    actor_identify(_hero);
+    //actor_identify(_hero);
 
     quit = false;
     while(!quit)
@@ -52,11 +62,12 @@ int world_main_loop(void)
         /*
             Transition map if necessary
         */
-        if(world_area_transition(_hero, _area_map))
+        Tile* _t = world_area_transition(_hero, _area_map);
+        if(_t != NULL)
         {
-            Tile* t_ = &(_area_map->_map[_hero->_row][_hero->_col]);
-            //free(_area_map);
-            _area_map = world_load_area(t_->_link_map);
+            // printf("Transition: %s\n", _t->_link_map);
+            world_actor_transition(_hero, _t);
+            _area_map = world_load_area(_t->_link_map);
         }
 
         /* Update the hero */
@@ -84,88 +95,125 @@ AreaMap* world_load_area(char* file_name_)
 {
     FILE* fptr;
     int level_;
-    char buf[255];
     int c;
+    int link_data_[4];
 
+    char buf[255];
+    char link_name_[15];
     char map_path_[20];
 
     Actor* a_;
     Tile* t_;
+    Tile* l_;
+    
 
     /* Init new map */
     AreaMap* m_ = world_new_areamap(file_name_);
-    // AreaMap* m_ = malloc(sizeof(AreaMap));
-    // strcpy(m_->_area_name, file_name_);
-    //world_map_init(m_);
 
     /* Open map file */
-    //fptr = world_open_map_file(file_name_);
-    strcpy(map_path_, "map/");
-    strcat(map_path_, file_name_);
-    fptr = fopen(map_path_, "r");
-    if(fptr == NULL)
-    {
-        printf("Couldn't load map: %s\n", map_path_);
-        return NULL;
-    }
+    fptr = world_open_map_file(file_name_);
 
     /* Read map data into map */
     c = fgetc(fptr);
     while(c != EOF)
     {
         fgets(buf, sizeof(buf), fptr);
-        if(c == 't')
+        switch(c)
         {
-            printf("Tile: %s\n", buf);
+            case 't':
+            // printf("Tile: %s\n", buf);
             t_ = tile_load(buf);
             m_->_map[t_->_row][t_->_col] = *t_;
             // tile_identify(&(m_->_map[t_->_row][t_->_col]));
-        }
+            break;
 
-        if(c == 'a')
-        {
-            printf("Actor: %s\n", buf);
+            case 'a':
+            // printf("Actor: %s\n", buf);
             a_ = actor_load(buf);
             actor_set_location(a_, a_->_col * tile_size, a_->_row * tile_size);
             m_->_actors[m_->_actor_count] = *a_;
             actor_identify(&(m_->_actors[m_->_actor_count]));
             m_->_actor_count++;
-        }
+            break;
 
-        if(c == 'l')
-        {
-            printf("Level: %s\n", buf);
+            case 'c':
+            // printf("Chest: %s\n", buf);
+            world_tile_add_chest(m_, buf);
+            break;
+
+            case 'd':
+            // printf("Door: %s\n", buf);
+            world_tile_add_door(m_, buf);
+            break;
+
+            case 'm':
+            // printf("Maplink: %s\n", buf);
+            world_tile_add_link(m_, buf);
+            break;
+
+            case 'l':
+            // printf("Level: %s\n", buf);
             sscanf(buf, "%d", &level_);
             m_->_map_height = level_;
-        }
+            break;
 
-        if(c == 'c')
-        {
-            printf("Chest: %s\n", buf);
-            world_tile_add_chest(m_, buf);
-        }
-
-        if(c == 'd')
-        {
-            printf("Door: %s\n", buf);
-            world_tile_add_door(m_, buf);
-        }
-
-        if(c == 'm')
-        {
-            int link_data_[4];
-            char link_name_[15];
-            Tile* l_;
-
-            printf("Maplink: %s\n", buf);
-            world_tile_add_link(m_, buf);
-        }
-
-        if(c == '#')
-        {
+            case '#':
             /* Ignore comments */
             //printf("Comment: %c%s\n", c, buf);
+            break;
         }
+        // if(c == 't')
+        // {
+        //     // printf("Tile: %s\n", buf);
+        //     t_ = tile_load(buf);
+        //     m_->_map[t_->_row][t_->_col] = *t_;
+        //     // tile_identify(&(m_->_map[t_->_row][t_->_col]));
+        // }
+
+        // if(c == 'a')
+        // {
+        //     // printf("Actor: %s\n", buf);
+        //     a_ = actor_load(buf);
+        //     actor_set_location(a_, a_->_col * tile_size, a_->_row * tile_size);
+        //     m_->_actors[m_->_actor_count] = *a_;
+        //     actor_identify(&(m_->_actors[m_->_actor_count]));
+        //     m_->_actor_count++;
+        // }
+
+        // if(c == 'l')
+        // {
+        //     // printf("Level: %s\n", buf);
+        //     sscanf(buf, "%d", &level_);
+        //     m_->_map_height = level_;
+        // }
+
+        // if(c == 'c')
+        // {
+        //     // printf("Chest: %s\n", buf);
+        //     world_tile_add_chest(m_, buf);
+        // }
+
+        // if(c == 'd')
+        // {
+        //     // printf("Door: %s\n", buf);
+        //     world_tile_add_door(m_, buf);
+        // }
+
+        // if(c == 'm')
+        // {
+        //     int link_data_[4];
+        //     char link_name_[15];
+        //     Tile* l_;
+
+        //     // printf("Maplink: %s\n", buf);
+        //     world_tile_add_link(m_, buf);
+        // }
+
+        // if(c == '#')
+        // {
+        //     /* Ignore comments */
+        //     //printf("Comment: %c%s\n", c, buf);
+        // }
 
         c = fgetc(fptr);
     }
@@ -311,8 +359,6 @@ void world_draw_actors(AreaMap* m_)
 
         // printf("%s:\nrow: %d\ty_pos: %d\ncol:%d\tx_pos:%d\n\n", a_->_name, a_->_row, a_->_y_pos, a_->_col, a_->_x_pos);
         world_draw_actor(a_);
-
-        // free(a_);
     }
 }
 
@@ -327,8 +373,6 @@ void world_draw_actor(Actor* a_)
     this_actor_.h = tile_size;
 
     SDL_RenderFillRect(gRenderer, &this_actor_);
-
-    // free(a_);
 }
 
 void world_draw_background(int map_height_)
@@ -365,9 +409,6 @@ void world_actors_move(AreaMap* m_)
                 DestTile* d_ = tile_get_dest(a_->_col, a_->_row, rand_i(0, 4));
                 world_actor_move(a_, m_, d_);
             }
-
-            // printf("free(a_)\n");
-            // free(a_);
         }
     }
 }
@@ -405,11 +446,6 @@ void world_actor_move(Actor* a_, AreaMap* m_, DestTile* d_)
             actor_face(a_, d_->_dir);
         }
     }
-
-    // printf("free(d_)\n");
-    // free(d_);
-    // printf("free(t_)\n");
-    // free(t_);
 }
 
 void world_actors_update(AreaMap* m_)
@@ -427,9 +463,6 @@ void world_actors_update(AreaMap* m_)
             }
 
             // Other stuff?
-
-            // printf("update: free(a_)\n");
-            // free(a_);
         }
     }
 }
@@ -454,22 +487,26 @@ void world_hero_update(Actor* h_)
     }
 }
 
-bool world_area_transition(Actor* h_, AreaMap* m_)
+Tile* world_area_transition(Actor* h_, AreaMap* m_)
 {
     Tile* t_ = &m_->_map[h_->_row][h_->_col];
     if(!h_->_on_link && !h_->_moving && strcmp(t_->_link_map, "NULL") != 0)
     {
-        printf("Hero on link tile:\n");
-        printf("New map: %s\n", t_->_link_map);
-        printf("Set hero location: [%d, %d]\n", t_->_link_row * tile_size, t_->_link_col * tile_size);
-        printf("Set hero grid: [%d, %d]\n\n", t_->_link_row, t_->_link_col);
-        actor_set_on_link(h_, true);
-        actor_set_location(h_, t_->_link_col * tile_size, t_->_link_row * tile_size);
-        actor_set_grid(h_, t_->_link_col, t_->_link_row);
-        return true;
+        return t_;
     }
 
-    return false;
+    return NULL;
+}
+
+void world_actor_transition(Actor* a_, Tile* t_)
+{
+    // printf("Hero on link tile:\n");
+    // printf("New map: %s\n", t_->_link_map);
+    // printf("Set hero location: [%d, %d]\n", t_->_link_row * tile_size, t_->_link_col * tile_size);
+    // printf("Set hero grid: [%d, %d]\n\n", t_->_link_row, t_->_link_col);
+    actor_set_on_link(a_, true);
+    actor_set_location(a_, t_->_link_col * tile_size, t_->_link_row * tile_size);
+    actor_set_grid(a_, t_->_link_col, t_->_link_row);
 }
 
 Tile* world_tile_lookup(AreaMap* m_, int row_, int col_)

@@ -59,6 +59,10 @@ void event_sdl(SDL_Event* e)
         quit = true;
     }
 
+    /*
+        TODO: eventually have this just return what buttons
+        were pushed rather than directly changing game states.
+    */
     if(e->type == SDL_KEYDOWN)
     {
         switch(e->key.keysym.sym)
