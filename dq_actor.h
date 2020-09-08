@@ -7,6 +7,18 @@
 #include "lib/util.h"
 
 typedef struct {
+    int* _inventory;
+    int _inv_count;
+} HeroInventory;
+
+typedef struct {
+    InvItem* _prev;
+    InvItem* _next;
+    int _item_id;
+    int _item_count;
+} InvItem;
+
+typedef struct {
     char _name[15];
     int _type_id;
     int _merchant_id;
@@ -32,6 +44,7 @@ typedef struct {
     bool _moving;
     bool _stationary;
     bool _on_link;
+    HeroInventory* _inv;
 } Actor;
 
 enum TypeId {
@@ -48,7 +61,7 @@ enum TypeId {
     MERCHANT,
     INNKEEP,
     GREENDRAGON,
-    DRAGONKING,
+    DRAGONLORD,
     HERO = 999
 };
 
@@ -58,6 +71,8 @@ enum Facing {
     SOUTH,
     WEST
 };
+
+#define MAX_INV 8
 
 /* Actor controls */
 int move_speed;
@@ -74,3 +89,9 @@ extern void actor_set_on_link(Actor* a_, bool onlink_);
 extern void actor_identify(Actor* a_);
 extern bool actor_has_arrived(Actor* a_, int tile_size_);
 extern bool actor_will_move(Actor* a_);
+
+/* Inventory functions */
+extern void actor_inventory_list(Actor* a_);
+extern void actor_inventory_remove(Actor* a_, int item_id_);
+extern bool actor_inventory_add(Actor* a_, int item_id_);
+extern int* actor_inventory_new(void);

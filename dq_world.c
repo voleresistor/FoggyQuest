@@ -51,9 +51,16 @@ int world_main_loop(void)
         savegame file.
     */
     Actor* _hero = actor_new("Buns", HERO, 0, false, 1, 1, tile_size);
+    actor_inventory_add(_hero, 1);
+    actor_inventory_add(_hero, 2);
+    actor_inventory_add(_hero, 3);
+    actor_inventory_add(_hero, 10);
+    actor_inventory_list(_hero);
+    actor_inventory_remove(_hero, 2);
+    actor_inventory_list(_hero);
     //actor_identify(_hero);
 
-    quit = false;
+    quit = true;
     while(!quit)
     {
         /* Handle events so we can close the window */
@@ -132,7 +139,7 @@ AreaMap* world_load_area(char* file_name_)
             a_ = actor_load(buf);
             actor_set_location(a_, a_->_col * tile_size, a_->_row * tile_size);
             m_->_actors[m_->_actor_count] = *a_;
-            actor_identify(&(m_->_actors[m_->_actor_count]));
+            //actor_identify(&(m_->_actors[m_->_actor_count]));
             m_->_actor_count++;
             break;
 
@@ -162,58 +169,6 @@ AreaMap* world_load_area(char* file_name_)
             //printf("Comment: %c%s\n", c, buf);
             break;
         }
-        // if(c == 't')
-        // {
-        //     // printf("Tile: %s\n", buf);
-        //     t_ = tile_load(buf);
-        //     m_->_map[t_->_row][t_->_col] = *t_;
-        //     // tile_identify(&(m_->_map[t_->_row][t_->_col]));
-        // }
-
-        // if(c == 'a')
-        // {
-        //     // printf("Actor: %s\n", buf);
-        //     a_ = actor_load(buf);
-        //     actor_set_location(a_, a_->_col * tile_size, a_->_row * tile_size);
-        //     m_->_actors[m_->_actor_count] = *a_;
-        //     actor_identify(&(m_->_actors[m_->_actor_count]));
-        //     m_->_actor_count++;
-        // }
-
-        // if(c == 'l')
-        // {
-        //     // printf("Level: %s\n", buf);
-        //     sscanf(buf, "%d", &level_);
-        //     m_->_map_height = level_;
-        // }
-
-        // if(c == 'c')
-        // {
-        //     // printf("Chest: %s\n", buf);
-        //     world_tile_add_chest(m_, buf);
-        // }
-
-        // if(c == 'd')
-        // {
-        //     // printf("Door: %s\n", buf);
-        //     world_tile_add_door(m_, buf);
-        // }
-
-        // if(c == 'm')
-        // {
-        //     int link_data_[4];
-        //     char link_name_[15];
-        //     Tile* l_;
-
-        //     // printf("Maplink: %s\n", buf);
-        //     world_tile_add_link(m_, buf);
-        // }
-
-        // if(c == '#')
-        // {
-        //     /* Ignore comments */
-        //     //printf("Comment: %c%s\n", c, buf);
-        // }
 
         c = fgetc(fptr);
     }
@@ -233,7 +188,7 @@ void world_tile_add_link(AreaMap* m_, char b[255])
     l_ = &(m_->_map[link_data_[0]][link_data_[1]]);
     tile_add_link(l_, link_data_[2], link_data_[3], link_name_);
     m_->_map[link_data_[0]][link_data_[1]] = *l_;
-    tile_identify(&(m_->_map[link_data_[0]][link_data_[1]]));
+    //tile_identify(&(m_->_map[link_data_[0]][link_data_[1]]));
 }
 
 void world_tile_add_door(AreaMap* m_, char b[255])
@@ -245,7 +200,7 @@ void world_tile_add_door(AreaMap* m_, char b[255])
     d_ = &(m_->_map[door_data_[0]][door_data_[1]]);
     tile_add_door(d_, door_data_[2]);
     m_->_map[door_data_[0]][door_data_[1]] = *d_;
-    tile_identify(&(m_->_map[door_data_[0]][door_data_[1]]));
+    //tile_identify(&(m_->_map[door_data_[0]][door_data_[1]]));
 }
 
 void world_tile_add_chest(AreaMap* m_, char b[255])
@@ -257,7 +212,7 @@ void world_tile_add_chest(AreaMap* m_, char b[255])
     c_ = &(m_->_map[chest_data_[0]][chest_data_[1]]);
     tile_add_chest(c_, chest_data_[2]);
     m_->_map[chest_data_[0]][chest_data_[1]] = *c_;
-    tile_identify(&(m_->_map[chest_data_[0]][chest_data_[1]]));
+    //tile_identify(&(m_->_map[chest_data_[0]][chest_data_[1]]));
 }
 
 FILE* world_open_map_file(char file_name_[20])
