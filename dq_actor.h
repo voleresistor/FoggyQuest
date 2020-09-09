@@ -6,17 +6,18 @@
 #include <stdio.h>
 #include "lib/util.h"
 
-typedef struct {
-    int* _inventory;
-    int _inv_count;
-} HeroInventory;
-
-typedef struct {
-    InvItem* _prev;
-    InvItem* _next;
+struct InvItem {
+    struct InvItem* _prev;
+    struct InvItem* _next;
     int _item_id;
     int _item_count;
-} InvItem;
+    int _max_items;
+};
+
+typedef struct {
+    struct InvItem* _next;
+    int _inv_count;
+} HeroInv;
 
 typedef struct {
     char _name[15];
@@ -44,7 +45,7 @@ typedef struct {
     bool _moving;
     bool _stationary;
     bool _on_link;
-    HeroInventory* _inv;
+    HeroInv* _inv;
 } Actor;
 
 enum TypeId {
@@ -92,6 +93,9 @@ extern bool actor_will_move(Actor* a_);
 
 /* Inventory functions */
 extern void actor_inventory_list(Actor* a_);
-extern void actor_inventory_remove(Actor* a_, int item_id_);
+extern bool actor_inventory_remove(Actor* a_, int item_id_);
 extern bool actor_inventory_add(Actor* a_, int item_id_);
-extern int* actor_inventory_new(void);
+// extern int* actor_inventory_new(void);
+extern struct InvItem* actor_inventory_next(struct InvItem* i_);
+extern struct InvItem* actor_inventory_prev(struct InvItem* i_);
+extern struct InvItem* actor_inventory_last(struct InvItem* i_);

@@ -34,75 +34,191 @@ Actor* actor_new(char name_[15], int type_id_, int merchant_id_, bool stationary
         n_->_atk        = n_->_str;
         n_->_def        = n_->_agi / 2;
 
-        HeroInventory* inv_ = malloc(sizeof(HeroInventory));
-        int* new_inv_ = actor_inventory_new();
+        HeroInv* inv_ = malloc(sizeof(HeroInv));
         inv_->_inv_count = 0;
-        inv_->_inventory = new_inv_;
+        inv_->_next = NULL;
         n_->_inv = inv_;
     }
 
     return n_;
 }
 
-int* actor_inventory_new(void)
-{
-    int* new_inv_ = malloc(MAX_INV * sizeof(int));
-    for(int i = 0; i < MAX_INV; i++)
-    {
-        new_inv_[i] = 0;
-    }
-
-    return new_inv_;
-}
-
 bool actor_inventory_add(Actor* a_, int item_id_)
 {
-    if(a_->_inv->_inv_count == MAX_INV)
+    if(a_->_inv->_inv_count < MAX_INV)
     {
-        return false;
-    }
+        struct InvItem* new_    = malloc(sizeof(struct InvItem));
+        new_->_item_id          = item_id_;
+        new_->_item_count       = 1;
+        new_->_max_items        = 1;
+        new_->_next             = NULL;
+        new_->_prev             = NULL;
 
-    a_->_inv->_inventory[a_->_inv->_inv_count] = item_id_;
-    // *(a_->_inv->_inventory + a_->_inv->_inv_count) = item_id_;
-    a_->_inv->_inv_count++;
-    return true;
-}
-
-void actor_inventory_remove(Actor* a_, int item_id_)
-{
-    bool item_found_ = false;
-    int new_count_ = 0;
-    int* new_inv_ = actor_inventory_new();
-
-    for(int i = 0; i < a_->_inv->_inv_count; i++)
-    {
-        if(!item_found_ && a_->_inv->_inventory[i] == item_id_)
+        if(a_->_inv->_next != NULL)
         {
-            printf("Removing item %d\n", a_->_inv->_inventory[i]);
-            item_found_ = true;
+            // printf("_inv->_next != NULL\n");
+            struct InvItem* last_ = actor_inventory_last(a_->_inv->_next);
+            // printf("last_->_item_id: %d\n", last_->_item_id);
+            // printf("new_->_item_id: %d\n", new_->_item_id);
+            last_->_next = new_;
+            new_->_prev = last_;
         }
         else
         {
-            printf("Keeping item %d\n", a_->_inv->_inventory[i]);
-            new_inv_[new_count_] = a_->_inv->_inventory[i];
-            new_count_++;
+            a_->_inv->_next = new_;
         }
+
+        a_->_inv->_inv_count++;
+        return true;
     }
 
-    a_->_inv->_inventory = new_inv_;
-    a_->_inv->_inv_count = new_count_;
+    return false;
+}
+
+bool actor_inventory_remove(Actor* a_, int item_id_)
+{
+    if(a_->_inv->_next != NULL)
+    {
+        struct InvItem* next_ = a_->_inv->_next;
+        while(next_->_item_id != item_id_ && next_->_next != NULL)
+        {
+            next_ = actor_inventory_next(next_);
+        }
+
+        /* if we somehow iterate the whole inventory and don't find the item */
+        if(next_->_item_id != item_id_)
+        {
+            return false;
+        }
+
+        struct InvItem* prev_ = actor_inventory_prev(next_);
+        if(prev_ == NULL && next_->_next == NULL)
+        {
+            a_->_inv->_next = NULL;
+        }
+        else if(prev_ == NULL && next_->_next != NULL)
+        {
+            a_->_inv->_next = next_->_next;
+            next_->_next->_prev = NULL;
+        }
+        else if(next_->_next == NULL && prev_ != NULL)
+        {
+            prev_->_next = NULL;
+        }
+        else
+        {
+            struct InvItem* n_next_ = actor_inventory_next(next_);
+            prev_->_next = next_->_next;
+            n_next_->_prev = next_->_prev;
+        }
+
+        free(next_);
+        a_->_inv->_inv_count--;
+        return true;
+    }
+
+    return false;
+}
+
+struct InvItem* actor_inventory_next(struct InvItem* i_)
+{
+    return i_->_next;
+}
+
+struct InvItem* actor_inventory_prev(struct InvItem* i_)
+{
+    return i_->_prev;
+}
+
+struct InvItem* actor_inventory_last(struct InvItem* i_)
+{
+    if(i_->_next != NULL)
+    {
+        return actor_inventory_last(i_->_next);
+    }
+
+    return i_;
 }
 
 void actor_inventory_list(Actor* a_)
 {
-    printf("Items in %s's bag:\n", a_->_name);
-    for(int i = 0; i < a_->_inv->_inv_count; i++)
+    printf("Items in %s's bag (%d/%d):\n", a_->_name, a_->_inv->_inv_count, MAX_INV);
+    if(a_->_inv->_next == NULL)
     {
-        printf("%d\n", a_->_inv->_inventory[i]);
+        printf("Bag is empty.\n");
+    }
+    else
+    {
+        struct InvItem* i_ = a_->_inv->_next;
+        while(i_ != NULL)
+        {
+            printf("%d(%d)\n", i_->_item_id, i_->_item_count);
+            i_ = actor_inventory_next(i_);
+        }
     }
 
     printf("\n");
 }
+
+// int* actor_inventory_new(void)
+// {
+//     int* new_inv_ = malloc(MAX_INV * sizeof(int));
+//     for(int i = 0; i < MAX_INV; i++)
+//     {
+//         new_inv_[i] = 0;
+//     }
+
+//     return new_inv_;
+// }
+
+// bool actor_inventory_add(Actor* a_, int item_id_)
+// {
+//     if(a_->_inv->_inv_count == MAX_INV)
+//     {
+//         return false;
+//     }
+
+//     a_->_inv->_inventory[a_->_inv->_inv_count] = item_id_;
+//     // *(a_->_inv->_inventory + a_->_inv->_inv_count) = item_id_;
+//     a_->_inv->_inv_count++;
+//     return true;
+// }
+
+// void actor_inventory_remove(Actor* a_, int item_id_)
+// {
+//     bool item_found_ = false;
+//     int new_count_ = 0;
+//     int* new_inv_ = actor_inventory_new();
+
+//     for(int i = 0; i < a_->_inv->_inv_count; i++)
+//     {
+//         if(!item_found_ && a_->_inv->_inventory[i] == item_id_)
+//         {
+//             printf("Removing item %d\n", a_->_inv->_inventory[i]);
+//             item_found_ = true;
+//         }
+//         else
+//         {
+//             printf("Keeping item %d\n", a_->_inv->_inventory[i]);
+//             new_inv_[new_count_] = a_->_inv->_inventory[i];
+//             new_count_++;
+//         }
+//     }
+
+//     a_->_inv->_inventory = new_inv_;
+//     a_->_inv->_inv_count = new_count_;
+// }
+
+// void actor_inventory_list(Actor* a_)
+// {
+//     printf("Items in %s's bag:\n", a_->_name);
+//     for(int i = 0; i < a_->_inv->_inv_count; i++)
+//     {
+//         printf("%d\n", a_->_inv->_inventory[i]);
+//     }
+
+//     printf("\n");
+// }
 
 Actor* actor_load(char b[255])
 {
