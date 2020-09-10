@@ -2,14 +2,16 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "lib/util.h"
+#include "dq_sdl.h"
 #include "dq_tile.h"
 #include "dq_actor.h"
-#include "dq_sdl.h"
+#include "dq_menu.h"
 
 /* Map array size control */
 #define MAX_ROWS 50
 #define MAX_COLS 50
 #define MOVE_UPDATES 12
+#define IDLE_DELAY 90
 
 typedef struct {
     char _area_name[15];
@@ -58,3 +60,7 @@ extern void world_draw_actor(Actor* a_);
 
 extern Tile* world_tile_lookup(AreaMap* m_, int row_, int col_);
 extern FILE* world_open_map_file(char file_name_[20]);
+
+/* Menus */
+extern void world_menu_idle(Actor* a_);
+extern void world_menu_action(void);

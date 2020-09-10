@@ -14,6 +14,8 @@ int world_init_game()
     grid_rows       = SCREEN_HEIGHT / tile_size;
     grid_cols       = SCREEN_WIDTH / tile_size;
 
+    action_menu = false;
+
     /*
         Init move speed based on scale
 
@@ -51,6 +53,7 @@ int world_main_loop(void)
         savegame file.
     */
     Actor* _hero = actor_new("Buns", HERO, 0, false, 1, 1, tile_size);
+    _hero->_idle_time = 0;
     //actor_identify(_hero);
 
     quit = false;
@@ -82,6 +85,8 @@ int world_main_loop(void)
         world_draw_map(_area_map);
         world_draw_actor(_hero);
         world_draw_actors(_area_map);
+        world_menu_idle(_hero);
+        world_menu_action();
         SDL_RenderPresent(gRenderer);
 
         /* Simple 30 fps delay for now */
@@ -421,6 +426,7 @@ void world_hero_move(Actor* h_, AreaMap* m_)
     {
         DestTile* d_ = tile_get_dest(h_->_col, h_->_row, hero_move);
         world_actor_move(h_, m_, d_);
+        h_->_idle_time = 0;
 
         hero_move = -1;
     }
@@ -428,6 +434,8 @@ void world_hero_move(Actor* h_, AreaMap* m_)
 
 void world_hero_update(Actor* h_)
 {
+    h_->_idle_time++;
+
     if(h_->_moving)
     {
         actor_update(h_, tile_size);
@@ -461,4 +469,38 @@ Tile* world_tile_lookup(AreaMap* m_, int row_, int col_)
 {
     Tile* t_ = &m_->_map[row_][col_];
     return t_;
+}
+
+void world_menu_idle(Actor* a_)
+{
+    if(a_->_idle_time >= IDLE_DELAY || action_menu)
+    {
+        SDL_Rect idle_menu_bg;
+        idle_menu_bg.x = SCREEN_WIDTH / 20;
+        idle_menu_bg.y = SCREEN_HEIGHT / 12;
+        idle_menu_bg.h = SCREEN_HEIGHT / 2;
+        idle_menu_bg.w = SCREEN_WIDTH / 4;
+
+        SDL_SetRenderDrawColor(gRenderer, 0xA0, 0xA0, 0xA0, 0xAA);
+        SDL_RenderFillRect(gRenderer, &idle_menu_bg);
+        SDL_SetRenderDrawColor(gRenderer, 0x0, 0x0, 0x0, 0xAA);
+        SDL_RenderFillRect(gRenderer, &idle_menu_bg);
+    }
+}
+
+void world_menu_action(void)
+{
+    if(action_menu)
+    {
+        SDL_Rect action_menu_bg;
+        action_menu_bg.x = (SCREEN_WIDTH / 5) * 2;
+        action_menu_bg.y = SCREEN_HEIGHT / 12;
+        action_menu_bg.h = SCREEN_HEIGHT / 2;
+        action_menu_bg.w = SCREEN_WIDTH / 2;
+
+        SDL_SetRenderDrawColor(gRenderer, 0xA0, 0xA0, 0xA0, 0xAA);
+        SDL_RenderFillRect(gRenderer, &action_menu_bg);
+        SDL_SetRenderDrawColor(gRenderer, 0x0, 0x0, 0x0, 0xAA);
+        SDL_RenderFillRect(gRenderer, &action_menu_bg);
+    }
 }

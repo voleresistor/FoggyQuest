@@ -42,6 +42,7 @@ typedef struct {
     int _x_pos;
     int _y_pos;
     int _facing;
+    int _idle_time;
     bool _moving;
     bool _stationary;
     bool _on_link;

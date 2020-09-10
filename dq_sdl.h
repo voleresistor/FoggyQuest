@@ -28,6 +28,7 @@ int grid_cols;
 
 /* Game control */
 bool quit;
+bool action_menu;
 
 extern int init_sdl(void);
 

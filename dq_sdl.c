@@ -71,6 +71,14 @@ void event_sdl(SDL_Event* e)
             quit = true;
             break;
 
+            case SDLK_e:
+            action_menu = true;
+            break;
+
+            case SDLK_x:
+            action_menu = false;
+            break;
+
             case SDLK_w:
             hero_move = 0;
             break;
