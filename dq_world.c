@@ -51,22 +51,9 @@ int world_main_loop(void)
         savegame file.
     */
     Actor* _hero = actor_new("Buns", HERO, 0, false, 1, 1, tile_size);
-    actor_inventory_add(_hero, 5);
-    actor_inventory_add(_hero, 8);
-    actor_inventory_add(_hero, 14);
-    actor_inventory_add(_hero, 10);
-    actor_inventory_list(_hero);
-    actor_inventory_remove(_hero, 14);
-    actor_inventory_list(_hero);
-    actor_inventory_remove(_hero, 5);
-    actor_inventory_list(_hero);
-    actor_inventory_remove(_hero, 8);
-    actor_inventory_list(_hero);
-    actor_inventory_remove(_hero, 10);
-    actor_inventory_list(_hero);
     //actor_identify(_hero);
 
-    quit = true;
+    quit = false;
     while(!quit)
     {
         /* Handle events so we can close the window */

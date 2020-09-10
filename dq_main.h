@@ -6,6 +6,7 @@
 // #define MIN(a,b) ((a) > (b)) ? b : a
 // #define MAX(a,b) ((a) > (b)) ? a : b
 
+extern int main(void);
 
 /*
     TODO (In no particular order)
@@ -13,7 +14,7 @@
     01. Monsters
     02. Menus
     ***03. Inventory - Complete with simple int inventory
-    03a. Stackable items? Using new struct and pointer chains
+    ***03a. Stackable items? Using new struct and pointer chains
     03b. Party bag with large/unlimited space for silly shit?
     04. Chest contents
     05. Combat
