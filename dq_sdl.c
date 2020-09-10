@@ -7,6 +7,7 @@ int init_sdl()
     // Set vars to something
     gRenderer   = NULL;
     gWindow     = NULL;
+    gFont       = NULL;
 
     // Initialize SDL
     if(SDL_Init(SDL_INIT_VIDEO) < 0)
@@ -35,6 +36,21 @@ int init_sdl()
     {
         // Set background
         SDL_SetRenderDrawColor(gRenderer, 0x0, 0x0, 0x0, 0x0);
+    }
+
+    /* Initialize PNG loading */
+    int imgFlags = IMG_INIT_PNG;
+    if(!(IMG_Init(imgFlags) & imgFlags))
+    {
+        printf("Unable to init SDL_Image. Error: %s\n", IMG_GetError());
+        return EXIT_FAILURE;
+    }
+
+    /* Initialize TTF fonts */
+    if(TTF_Init() == -1)
+    {
+        printf("Unable to init SDL_ttf. Error: %s\n", TTF_GetError());
+        return EXIT_FAILURE;
     }
 
     /* SDL blend settings */
@@ -100,18 +116,24 @@ void event_sdl(SDL_Event* e)
 
 void close_sdl()
 {
-    // Free up window and renderer
+    /* Free gloabl font */
+    TTF_CloseFont(gFont);
+    gFont = NULL;
+
+    /* Free up window and renderer */
     SDL_DestroyRenderer(gRenderer);
     SDL_DestroyWindow(gWindow);
     gRenderer = NULL;
     gWindow = NULL;
 
-    // Free up music file
+    /* Free up music file */
     //Mix_FreeMusic(music);
     //music = NULL;
 
-    // Close out SDL subsystems
+    /* Close out SDL subsystems */
     Mix_CloseAudio();
+    TTF_Quit();
+    IMG_Quit();
     SDL_Quit();
 }
 

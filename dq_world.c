@@ -85,8 +85,8 @@ int world_main_loop(void)
         world_draw_map(_area_map);
         world_draw_actor(_hero);
         world_draw_actors(_area_map);
-        world_menu_idle(_hero);
-        world_menu_action();
+        world_draw_menu_idle(_hero);
+        world_draw_menu_action();
         SDL_RenderPresent(gRenderer);
 
         /* Simple 30 fps delay for now */
@@ -368,8 +368,12 @@ void world_actors_move(AreaMap* m_)
 
 void world_actor_move(Actor* a_, AreaMap* m_, DestTile* d_)
 {
-    // int col_ = d_->_col;
-    // int row_ = d_->_row;
+    // Don't allow actor movement in menus
+    if(action_menu)
+    {
+        return;
+    }
+
     Tile* t_ = &m_->_map[d_->_row][d_->_col];
 
     if(tile_is_passable(t_))
@@ -422,6 +426,13 @@ void world_actors_update(AreaMap* m_)
 
 void world_hero_move(Actor* h_, AreaMap* m_)
 {
+    // Don't allow actor movement in menus
+    if(action_menu)
+    {
+        hero_move = -1;
+        return;
+    }
+
     if(hero_move >= 0 && !h_->_moving)
     {
         DestTile* d_ = tile_get_dest(h_->_col, h_->_row, hero_move);
@@ -434,7 +445,10 @@ void world_hero_move(Actor* h_, AreaMap* m_)
 
 void world_hero_update(Actor* h_)
 {
-    h_->_idle_time++;
+    if(h_->_idle_time < 180)
+    {
+        h_->_idle_time++;
+    }
 
     if(h_->_moving)
     {
@@ -471,24 +485,59 @@ Tile* world_tile_lookup(AreaMap* m_, int row_, int col_)
     return t_;
 }
 
-void world_menu_idle(Actor* a_)
+void world_draw_menu_idle(Actor* a_)
 {
     if(a_->_idle_time >= IDLE_DELAY || action_menu)
     {
+        /* Menu background */
         SDL_Rect idle_menu_bg;
         idle_menu_bg.x = SCREEN_WIDTH / 20;
         idle_menu_bg.y = SCREEN_HEIGHT / 12;
         idle_menu_bg.h = SCREEN_HEIGHT / 2;
         idle_menu_bg.w = SCREEN_WIDTH / 4;
 
-        SDL_SetRenderDrawColor(gRenderer, 0xA0, 0xA0, 0xA0, 0xAA);
+        /* Render background with transparency because why not */
+        SDL_SetRenderDrawColor(gRenderer, 0xA0, 0xA0, 0xA0, 0xCC);
         SDL_RenderFillRect(gRenderer, &idle_menu_bg);
         SDL_SetRenderDrawColor(gRenderer, 0x0, 0x0, 0x0, 0xAA);
         SDL_RenderFillRect(gRenderer, &idle_menu_bg);
+
+        char* lev = "LV ";
+        char lev_int[2];
+        sprintf(lev_int, "%d", a_->_level);
+        strcat(lev, lev_int);
+
+        int y_space = 56;
+        draw_texture(a_->_name, (idle_menu_bg.x + idle_menu_bg.w) / 2 - 36, idle_menu_bg.y + 10);
+        draw_texture("LV", idle_menu_bg.x + 10, idle_menu_bg.y + y_space);
+        draw_texture(lev, (idle_menu_bg.x + idle_menu_bg.w) - 82, idle_menu_bg.y + y_space);
+        draw_texture("HP", idle_menu_bg.x + 10, idle_menu_bg.y + y_space * 2);
+        draw_texture("MP", idle_menu_bg.x + 10, idle_menu_bg.y + y_space * 3);
+        draw_texture("GD", idle_menu_bg.x + 10, idle_menu_bg.y + y_space * 4);
+        draw_texture("XP", idle_menu_bg.x + 10, idle_menu_bg.y + y_space * 5);
+
     }
 }
 
-void world_menu_action(void)
+void draw_texture(char message[15], int x, int y)
+{
+    /* Get the font. I should only be doing this once somewhere else */
+    TTF_Font* gCant = TTF_OpenFont("/usr/share/fonts/cantarell/Cantarell-Bold.otf", 12);
+    SDL_Color textCol = {255, 255, 255};
+
+    SDL_Surface* sfc_idle = TTF_RenderText_Solid(gCant, message, textCol);
+    SDL_Texture* tex_idle = SDL_CreateTextureFromSurface(gRenderer, sfc_idle);
+    SDL_Rect rect_idle;
+    rect_idle.x = x;
+    rect_idle.y = y;
+    rect_idle.w = 12 * 6;
+    rect_idle.h = 12 * 3;
+    SDL_RenderCopy(gRenderer, tex_idle, NULL, &rect_idle);
+    SDL_FreeSurface(sfc_idle);
+    SDL_DestroyTexture(tex_idle);
+}
+
+void world_draw_menu_action(void)
 {
     if(action_menu)
     {

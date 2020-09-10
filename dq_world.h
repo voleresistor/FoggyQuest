@@ -62,5 +62,7 @@ extern Tile* world_tile_lookup(AreaMap* m_, int row_, int col_);
 extern FILE* world_open_map_file(char file_name_[20]);
 
 /* Menus */
-extern void world_menu_idle(Actor* a_);
-extern void world_menu_action(void);
+extern void world_draw_menu_idle(Actor* a_);
+extern void world_draw_menu_action(void);
+
+extern void draw_texture(char message[15], int x, int y);

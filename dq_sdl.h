@@ -2,6 +2,8 @@
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_mixer.h>
+#include <SDL2/SDL_ttf.h>
+#include <SDL2/SDL_image.h>
 #include <stdbool.h>
 
 unsigned int SCREEN_WIDTH;
@@ -14,6 +16,7 @@ SDL_Renderer*   gRenderer;
 /* Specific SDL assest */
 SDL_Surface*    intro_image;
 SDL_Texture*    intro_texture;
+TTF_Font*       gFont;
 SDL_Event       event;
 const Uint8*    keystates;
 int             m_x;
