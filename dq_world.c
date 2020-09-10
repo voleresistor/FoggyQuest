@@ -5,7 +5,7 @@
 /*
     _init()
 */
-int world_init_game()
+int world_init_game(void)
 {
     tile_cols       = 16;
     SCREEN_WIDTH    = 1024;
@@ -54,6 +54,12 @@ int world_main_loop(void)
     */
     Actor* _hero = actor_new("Buns", HERO, 0, false, 1, 1, tile_size);
     _hero->_idle_time = 0;
+    _hero->_level = 5;
+    _hero->_xp = 2334;
+    _hero->_cur_hp = 41;
+    _hero->_cur_mp = 30;
+    _hero->_gold = 312;
+
     //actor_identify(_hero);
 
     quit = false;
@@ -502,36 +508,81 @@ void world_draw_menu_idle(Actor* a_)
         SDL_SetRenderDrawColor(gRenderer, 0x0, 0x0, 0x0, 0xAA);
         SDL_RenderFillRect(gRenderer, &idle_menu_bg);
 
-        char* lev = "LV ";
-        char lev_int[2];
-        sprintf(lev_int, "%d", a_->_level);
-        strcat(lev, lev_int);
+        // char lev_int[2];
+        // char hp_int[3];
+        // char mp_int[3];
+        // char gold_int[4];
+        // char xp_int[6];
+        // sprintf(lev_int, "%02d", a_->_level);
+        // sprintf(hp_int, "%03d", a_->_cur_hp);
+        // sprintf(mp_int, "%03d", a_->_cur_mp);
+        // sprintf(gold_int, "%04d", a_->_gold);
+        // sprintf(xp_int, "%06d", a_->_xp);
+        char data_int[7];
+        get_int_string(a_->_level, data_int, 6);
 
-        int y_space = 56;
-        draw_texture(a_->_name, (idle_menu_bg.x + idle_menu_bg.w) / 2 - 36, idle_menu_bg.y + 10);
-        draw_texture("LV", idle_menu_bg.x + 10, idle_menu_bg.y + y_space);
-        draw_texture(lev, (idle_menu_bg.x + idle_menu_bg.w) - 82, idle_menu_bg.y + y_space);
-        draw_texture("HP", idle_menu_bg.x + 10, idle_menu_bg.y + y_space * 2);
-        draw_texture("MP", idle_menu_bg.x + 10, idle_menu_bg.y + y_space * 3);
-        draw_texture("GD", idle_menu_bg.x + 10, idle_menu_bg.y + y_space * 4);
-        draw_texture("XP", idle_menu_bg.x + 10, idle_menu_bg.y + y_space * 5);
+        int y_space = 64;
+        draw_texture(a_->_name, (SCREEN_WIDTH / 20 + idle_menu_bg.w) / 2 - strlen(a_->_name) * 8, idle_menu_bg.y + 10);
+
+        /* Level */
+        draw_texture("LV", SCREEN_WIDTH / 20 + 10, idle_menu_bg.y + y_space);
+        get_int_string(a_->_level, data_int, 6);
+        draw_texture(data_int, (SCREEN_WIDTH / 20 + idle_menu_bg.w) - strlen(data_int) * 24 - 10, idle_menu_bg.y + y_space);
+
+        /* HP */
+        draw_texture("HP", SCREEN_WIDTH / 20 + 10, idle_menu_bg.y + y_space * 2);
+        get_int_string(a_->_cur_hp, data_int, 6);
+        draw_texture(data_int, (SCREEN_WIDTH / 20 + idle_menu_bg.w) - strlen(data_int) * 24 - 10, idle_menu_bg.y + y_space * 2);
+
+        /* MP */
+        draw_texture("MP", SCREEN_WIDTH / 20 + 10, idle_menu_bg.y + y_space * 3);
+        get_int_string(a_->_cur_mp, data_int, 6);
+        draw_texture(data_int, (SCREEN_WIDTH / 20 + idle_menu_bg.w) - strlen(data_int) * 24 - 10, idle_menu_bg.y + y_space * 3);
+
+        /* Gold */
+        draw_texture("GD", SCREEN_WIDTH / 20 + 10, idle_menu_bg.y + y_space * 4);
+        get_int_string(a_->_gold, data_int, 6);
+        draw_texture(data_int, (SCREEN_WIDTH / 20 + idle_menu_bg.w) - strlen(data_int) * 24 - 10, idle_menu_bg.y + y_space * 4);
+
+        /* XP */
+        draw_texture("XP", SCREEN_WIDTH / 20 + 10, idle_menu_bg.y + y_space * 5);
+        get_int_string(a_->_xp, data_int, 6);
+        draw_texture(data_int, (SCREEN_WIDTH / 20 + idle_menu_bg.w) - strlen(data_int) * 24 - 10, idle_menu_bg.y + y_space * 5);
 
     }
+}
+
+void get_int_string(int i, char* data, int buf)
+{
+    char retstr[buf];
+    sprintf(retstr, "%05d", i);
+
+    strncpy(data, retstr, buf - 1);
+    data[buf - 1] = '\0';
 }
 
 void draw_texture(char message[15], int x, int y)
 {
     /* Get the font. I should only be doing this once somewhere else */
-    TTF_Font* gCant = TTF_OpenFont("/usr/share/fonts/cantarell/Cantarell-Bold.otf", 12);
+    TTF_Font* gCant = TTF_OpenFont("/usr/share/fonts/cantarell/Cantarell-Bold.otf", 32);
     SDL_Color textCol = {255, 255, 255};
 
     SDL_Surface* sfc_idle = TTF_RenderText_Solid(gCant, message, textCol);
     SDL_Texture* tex_idle = SDL_CreateTextureFromSurface(gRenderer, sfc_idle);
-    SDL_Rect rect_idle;
-    rect_idle.x = x;
-    rect_idle.y = y;
-    rect_idle.w = 12 * 6;
-    rect_idle.h = 12 * 3;
+
+    /* Query that texture */
+    int texW;
+    int texH;
+    SDL_QueryTexture(tex_idle, NULL, NULL, &texW, &texH);
+    // printf("%d\n", texW);
+
+    SDL_Rect rect_idle = {x, y, texW, texH};
+
+    // SDL_Rect rect_idle;
+    // rect_idle.x = x;
+    // rect_idle.y = y;
+    // rect_idle.w = strlen(message) * 24;
+    // rect_idle.h = 12 * 3;
     SDL_RenderCopy(gRenderer, tex_idle, NULL, &rect_idle);
     SDL_FreeSurface(sfc_idle);
     SDL_DestroyTexture(tex_idle);

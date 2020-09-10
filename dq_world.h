@@ -65,4 +65,6 @@ extern FILE* world_open_map_file(char file_name_[20]);
 extern void world_draw_menu_idle(Actor* a_);
 extern void world_draw_menu_action(void);
 
+/* These are likely to die or change */
 extern void draw_texture(char message[15], int x, int y);
+extern void get_int_string(int i, char* data, int buf);
