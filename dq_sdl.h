@@ -43,3 +43,5 @@ extern void draw_window(void);
 extern void draw_local_area(int row_, int col_, int tex_);
 extern void video_set_tile_texture(int tex_);
 extern void video_set_actor_texture(int tex_);
+extern void video_draw_menu_window(SDL_Rect* menu_rect);
+extern void video_draw_text(char message[15], int x, int y);

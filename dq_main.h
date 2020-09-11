@@ -34,5 +34,6 @@ extern int main(void);
     19. Title screen
     20. Spells
     21. Scripting API for cutscenes/chapters/Gwaelin's Love
-    22. 
+    22. Move SDL calls to dq_sdl module
+    23. organize c files
 */

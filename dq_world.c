@@ -81,18 +81,18 @@ int world_main_loop(void)
 
         /* Update the hero */
         world_hero_move(_hero, _area_map);
-        world_hero_update(_hero);
+        // world_hero_update(_hero);
 
         /* Update the actors */
         world_actors_move(_area_map);
-        world_actors_update(_area_map);
+        // world_actors_update(_area_map);
 
         /* Draw the window */
         world_draw_map(_area_map);
         world_draw_actor(_hero);
         world_draw_actors(_area_map);
-        world_draw_menu_idle(_hero);
-        world_draw_menu_action();
+        world_menu_draw_idle(_hero);
+        world_menu_draw_action();
         SDL_RenderPresent(gRenderer);
 
         /* Simple 30 fps delay for now */
@@ -351,6 +351,12 @@ void world_draw_background(int map_height_)
 
 void world_actors_move(AreaMap* m_)
 {
+    // Don't allow actor movement in menus
+    if(action_menu)
+    {
+        return;
+    }
+
     if(m_->_actor_count > 0)
     {
         for(int i = 0; i < m_->_actor_count; i++)
@@ -370,16 +376,12 @@ void world_actors_move(AreaMap* m_)
             }
         }
     }
+
+    world_actors_update(m_);
 }
 
 void world_actor_move(Actor* a_, AreaMap* m_, DestTile* d_)
 {
-    // Don't allow actor movement in menus
-    if(action_menu)
-    {
-        return;
-    }
-
     Tile* t_ = &m_->_map[d_->_row][d_->_col];
 
     if(tile_is_passable(t_))
@@ -436,6 +438,7 @@ void world_hero_move(Actor* h_, AreaMap* m_)
     if(action_menu)
     {
         hero_move = -1;
+        h_->_idle_time = 0;
         return;
     }
 
@@ -447,6 +450,8 @@ void world_hero_move(Actor* h_, AreaMap* m_)
 
         hero_move = -1;
     }
+
+    world_hero_update(h_);
 }
 
 void world_hero_update(Actor* h_)
@@ -491,7 +496,7 @@ Tile* world_tile_lookup(AreaMap* m_, int row_, int col_)
     return t_;
 }
 
-void world_draw_menu_idle(Actor* a_)
+void world_menu_draw_idle(Actor* a_)
 {
     if(a_->_idle_time >= IDLE_DELAY || action_menu)
     {
@@ -501,53 +506,38 @@ void world_draw_menu_idle(Actor* a_)
         idle_menu_bg.y = SCREEN_HEIGHT / 12;
         idle_menu_bg.h = SCREEN_HEIGHT / 2;
         idle_menu_bg.w = SCREEN_WIDTH / 4;
+        video_draw_menu_window(&idle_menu_bg);
 
-        /* Render background with transparency because why not */
-        SDL_SetRenderDrawColor(gRenderer, 0xA0, 0xA0, 0xA0, 0xCC);
-        SDL_RenderFillRect(gRenderer, &idle_menu_bg);
-        SDL_SetRenderDrawColor(gRenderer, 0x0, 0x0, 0x0, 0xAA);
-        SDL_RenderFillRect(gRenderer, &idle_menu_bg);
-
-        // char lev_int[2];
-        // char hp_int[3];
-        // char mp_int[3];
-        // char gold_int[4];
-        // char xp_int[6];
-        // sprintf(lev_int, "%02d", a_->_level);
-        // sprintf(hp_int, "%03d", a_->_cur_hp);
-        // sprintf(mp_int, "%03d", a_->_cur_mp);
-        // sprintf(gold_int, "%04d", a_->_gold);
-        // sprintf(xp_int, "%06d", a_->_xp);
         char data_int[7];
         get_int_string(a_->_level, data_int, 6);
 
         int y_space = 64;
-        draw_texture(a_->_name, (SCREEN_WIDTH / 20 + idle_menu_bg.w) / 2 - strlen(a_->_name) * 8, idle_menu_bg.y + 10);
+        video_draw_text(a_->_name, (SCREEN_WIDTH / 20 + idle_menu_bg.w) / 2 - strlen(a_->_name) * 8, idle_menu_bg.y + 10);
 
         /* Level */
-        draw_texture("LV", SCREEN_WIDTH / 20 + 30, idle_menu_bg.y + y_space);
+        video_draw_text("LV", SCREEN_WIDTH / 20 + 30, idle_menu_bg.y + y_space);
         get_int_string(a_->_level, data_int, 6);
-        draw_texture(data_int, (SCREEN_WIDTH / 20 + idle_menu_bg.w) - strlen(data_int) * 24 - 10, idle_menu_bg.y + y_space);
+        video_draw_text(data_int, (SCREEN_WIDTH / 20 + idle_menu_bg.w) - strlen(data_int) * 24 - 10, idle_menu_bg.y + y_space);
 
         /* HP */
-        draw_texture("HP", SCREEN_WIDTH / 20 + 30, idle_menu_bg.y + y_space * 2);
+        video_draw_text("HP", SCREEN_WIDTH / 20 + 30, idle_menu_bg.y + y_space * 2);
         get_int_string(a_->_cur_hp, data_int, 6);
-        draw_texture(data_int, (SCREEN_WIDTH / 20 + idle_menu_bg.w) - strlen(data_int) * 24 - 10, idle_menu_bg.y + y_space * 2);
+        video_draw_text(data_int, (SCREEN_WIDTH / 20 + idle_menu_bg.w) - strlen(data_int) * 24 - 10, idle_menu_bg.y + y_space * 2);
 
         /* MP */
-        draw_texture("MP", SCREEN_WIDTH / 20 + 30, idle_menu_bg.y + y_space * 3);
+        video_draw_text("MP", SCREEN_WIDTH / 20 + 30, idle_menu_bg.y + y_space * 3);
         get_int_string(a_->_cur_mp, data_int, 6);
-        draw_texture(data_int, (SCREEN_WIDTH / 20 + idle_menu_bg.w) - strlen(data_int) * 24 - 10, idle_menu_bg.y + y_space * 3);
+        video_draw_text(data_int, (SCREEN_WIDTH / 20 + idle_menu_bg.w) - strlen(data_int) * 24 - 10, idle_menu_bg.y + y_space * 3);
 
         /* Gold */
-        draw_texture("GD", SCREEN_WIDTH / 20 + 30, idle_menu_bg.y + y_space * 4);
+        video_draw_text("GD", SCREEN_WIDTH / 20 + 30, idle_menu_bg.y + y_space * 4);
         get_int_string(a_->_gold, data_int, 6);
-        draw_texture(data_int, (SCREEN_WIDTH / 20 + idle_menu_bg.w) - strlen(data_int) * 24 - 10, idle_menu_bg.y + y_space * 4);
+        video_draw_text(data_int, (SCREEN_WIDTH / 20 + idle_menu_bg.w) - strlen(data_int) * 24 - 10, idle_menu_bg.y + y_space * 4);
 
         /* XP */
-        draw_texture("XP", SCREEN_WIDTH / 20 + 30, idle_menu_bg.y + y_space * 5);
+        video_draw_text("XP", SCREEN_WIDTH / 20 + 30, idle_menu_bg.y + y_space * 5);
         get_int_string(a_->_xp, data_int, 6);
-        draw_texture(data_int, (SCREEN_WIDTH / 20 + idle_menu_bg.w) - strlen(data_int) * 24 - 10, idle_menu_bg.y + y_space * 5);
+        video_draw_text(data_int, (SCREEN_WIDTH / 20 + idle_menu_bg.w) - strlen(data_int) * 24 - 10, idle_menu_bg.y + y_space * 5);
 
     }
 }
@@ -561,25 +551,7 @@ void get_int_string(int i, char* data, int buf)
     data[buf - 1] = '\0';
 }
 
-void draw_texture(char message[15], int x, int y)
-{
-    SDL_Color textCol = {255, 255, 255};
-    SDL_Surface* sfc_idle = TTF_RenderText_Solid(gCant, message, textCol);
-    SDL_Texture* tex_idle = SDL_CreateTextureFromSurface(gRenderer, sfc_idle);
-
-    /* Query that texture */
-    int texW;
-    int texH;
-    SDL_QueryTexture(tex_idle, NULL, NULL, &texW, &texH);
-    // printf("%d\n", texW);
-
-    SDL_Rect rect_idle = {x, y, texW, texH};
-    SDL_RenderCopy(gRenderer, tex_idle, NULL, &rect_idle);
-    SDL_FreeSurface(sfc_idle);
-    SDL_DestroyTexture(tex_idle);
-}
-
-void world_draw_menu_action(void)
+void world_menu_draw_action(void)
 {
     if(action_menu)
     {
@@ -588,20 +560,16 @@ void world_draw_menu_action(void)
         action_menu_bg.y = SCREEN_HEIGHT / 10;
         action_menu_bg.h = SCREEN_HEIGHT / 3.5;
         action_menu_bg.w = SCREEN_WIDTH / 2.5;
-
-        SDL_SetRenderDrawColor(gRenderer, 0xA0, 0xA0, 0xA0, 0xAA);
-        SDL_RenderFillRect(gRenderer, &action_menu_bg);
-        SDL_SetRenderDrawColor(gRenderer, 0x0, 0x0, 0x0, 0xAA);
-        SDL_RenderFillRect(gRenderer, &action_menu_bg);
+        video_draw_menu_window(&action_menu_bg);
 
         int y_space = 48;
 
         /* Level */
-        draw_texture("TALK", (SCREEN_WIDTH / 5) * 2 + 40, action_menu_bg.y + y_space);
-        draw_texture("SPELL", (SCREEN_WIDTH / 5) * 2 + action_menu_bg.w - 140, action_menu_bg.y + y_space);
-        draw_texture("STATUS", (SCREEN_WIDTH / 5) * 2 + 40, action_menu_bg.y + y_space * 2);
-        draw_texture("ITEM", (SCREEN_WIDTH / 5) * 2 + action_menu_bg.w - 140, action_menu_bg.y + y_space * 2);
-        draw_texture("DOOR", (SCREEN_WIDTH / 5) * 2 + 40, action_menu_bg.y + y_space * 3);
-        draw_texture("SEARCH", (SCREEN_WIDTH / 5) * 2 + action_menu_bg.w - 140, action_menu_bg.y + y_space * 3);
+        video_draw_text("TALK", (SCREEN_WIDTH / 5) * 2 + 40, action_menu_bg.y + y_space);
+        video_draw_text("SPELL", (SCREEN_WIDTH / 5) * 2 + action_menu_bg.w - 140, action_menu_bg.y + y_space);
+        video_draw_text("STATUS", (SCREEN_WIDTH / 5) * 2 + 40, action_menu_bg.y + y_space * 2);
+        video_draw_text("ITEM", (SCREEN_WIDTH / 5) * 2 + action_menu_bg.w - 140, action_menu_bg.y + y_space * 2);
+        video_draw_text("DOOR", (SCREEN_WIDTH / 5) * 2 + 40, action_menu_bg.y + y_space * 3);
+        video_draw_text("SEARCH", (SCREEN_WIDTH / 5) * 2 + action_menu_bg.w - 140, action_menu_bg.y + y_space * 3);
     }
 }

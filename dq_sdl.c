@@ -235,3 +235,30 @@ void video_set_actor_texture(int tex_)
         SDL_SetRenderDrawColor(gRenderer, 0x0, 0x0, 0xFF, 0x32);
     }
 }
+
+void video_draw_menu_window(SDL_Rect* menu_rect)
+{
+    /* Render background with transparency because why not */
+    SDL_SetRenderDrawColor(gRenderer, 0xA0, 0xA0, 0xA0, 0xCC);
+    SDL_RenderFillRect(gRenderer, menu_rect);
+    SDL_SetRenderDrawColor(gRenderer, 0x0, 0x0, 0x0, 0xAA);
+    SDL_RenderFillRect(gRenderer, menu_rect);
+}
+
+void video_draw_text(char message[15], int x, int y)
+{
+    SDL_Color textCol = {255, 255, 255};
+    SDL_Surface* sfc_idle = TTF_RenderText_Solid(gCant, message, textCol);
+    SDL_Texture* tex_idle = SDL_CreateTextureFromSurface(gRenderer, sfc_idle);
+
+    /* Query that texture */
+    int texW;
+    int texH;
+    SDL_QueryTexture(tex_idle, NULL, NULL, &texW, &texH);
+    // printf("%d\n", texW);
+
+    SDL_Rect rect_idle = {x, y, texW, texH};
+    SDL_RenderCopy(gRenderer, tex_idle, NULL, &rect_idle);
+    SDL_FreeSurface(sfc_idle);
+    SDL_DestroyTexture(tex_idle);
+}
