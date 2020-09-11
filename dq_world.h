@@ -6,6 +6,7 @@
 #include "dq_tile.h"
 #include "dq_actor.h"
 #include "dq_menu.h"
+#include "dq_controls.h"
 
 /* Map array size control */
 #define MAX_ROWS 50

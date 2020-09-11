@@ -67,6 +67,7 @@ int world_main_loop(void)
     {
         /* Handle events so we can close the window */
         event_handler();
+        world_controls_handle_controls();
 
         /*
             Transition map if necessary
@@ -572,4 +573,9 @@ void world_menu_draw_action(void)
         video_draw_text("DOOR", (SCREEN_WIDTH / 5) * 2 + 40, action_menu_bg.y + y_space * 3);
         video_draw_text("SEARCH", (SCREEN_WIDTH / 5) * 2 + action_menu_bg.w - 140, action_menu_bg.y + y_space * 3);
     }
+}
+
+void world_controls_handle_controls(void)
+{
+    printf("W: %d\nA: %d\nS: %d\nD: %d\n\n", keystates[SDL_SCANCODE_W], keystates[SDL_SCANCODE_A], keystates[SDL_SCANCODE_S], keystates[SDL_SCANCODE_D]);
 }
