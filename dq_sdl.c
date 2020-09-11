@@ -8,6 +8,7 @@ int init_sdl()
     gRenderer   = NULL;
     gWindow     = NULL;
     gFont       = NULL;
+    gCant       = NULL;
 
     // Initialize SDL
     if(SDL_Init(SDL_INIT_VIDEO) < 0)
@@ -52,6 +53,12 @@ int init_sdl()
         printf("Unable to init SDL_ttf. Error: %s\n", TTF_GetError());
         return EXIT_FAILURE;
     }
+
+    /* Menu and dialog font
+        SourceCodePro-Bold.otf
+        Cantarell-Bold.otf
+    */
+    gCant = TTF_OpenFont("font/SourceCodePro-Bold.otf", 32);
 
     /* SDL blend settings */
     SDL_SetRenderDrawBlendMode(gRenderer, SDL_BLENDMODE_BLEND);

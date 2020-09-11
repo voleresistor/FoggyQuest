@@ -525,27 +525,27 @@ void world_draw_menu_idle(Actor* a_)
         draw_texture(a_->_name, (SCREEN_WIDTH / 20 + idle_menu_bg.w) / 2 - strlen(a_->_name) * 8, idle_menu_bg.y + 10);
 
         /* Level */
-        draw_texture("LV", SCREEN_WIDTH / 20 + 10, idle_menu_bg.y + y_space);
+        draw_texture("LV", SCREEN_WIDTH / 20 + 30, idle_menu_bg.y + y_space);
         get_int_string(a_->_level, data_int, 6);
         draw_texture(data_int, (SCREEN_WIDTH / 20 + idle_menu_bg.w) - strlen(data_int) * 24 - 10, idle_menu_bg.y + y_space);
 
         /* HP */
-        draw_texture("HP", SCREEN_WIDTH / 20 + 10, idle_menu_bg.y + y_space * 2);
+        draw_texture("HP", SCREEN_WIDTH / 20 + 30, idle_menu_bg.y + y_space * 2);
         get_int_string(a_->_cur_hp, data_int, 6);
         draw_texture(data_int, (SCREEN_WIDTH / 20 + idle_menu_bg.w) - strlen(data_int) * 24 - 10, idle_menu_bg.y + y_space * 2);
 
         /* MP */
-        draw_texture("MP", SCREEN_WIDTH / 20 + 10, idle_menu_bg.y + y_space * 3);
+        draw_texture("MP", SCREEN_WIDTH / 20 + 30, idle_menu_bg.y + y_space * 3);
         get_int_string(a_->_cur_mp, data_int, 6);
         draw_texture(data_int, (SCREEN_WIDTH / 20 + idle_menu_bg.w) - strlen(data_int) * 24 - 10, idle_menu_bg.y + y_space * 3);
 
         /* Gold */
-        draw_texture("GD", SCREEN_WIDTH / 20 + 10, idle_menu_bg.y + y_space * 4);
+        draw_texture("GD", SCREEN_WIDTH / 20 + 30, idle_menu_bg.y + y_space * 4);
         get_int_string(a_->_gold, data_int, 6);
         draw_texture(data_int, (SCREEN_WIDTH / 20 + idle_menu_bg.w) - strlen(data_int) * 24 - 10, idle_menu_bg.y + y_space * 4);
 
         /* XP */
-        draw_texture("XP", SCREEN_WIDTH / 20 + 10, idle_menu_bg.y + y_space * 5);
+        draw_texture("XP", SCREEN_WIDTH / 20 + 30, idle_menu_bg.y + y_space * 5);
         get_int_string(a_->_xp, data_int, 6);
         draw_texture(data_int, (SCREEN_WIDTH / 20 + idle_menu_bg.w) - strlen(data_int) * 24 - 10, idle_menu_bg.y + y_space * 5);
 
@@ -555,7 +555,7 @@ void world_draw_menu_idle(Actor* a_)
 void get_int_string(int i, char* data, int buf)
 {
     char retstr[buf];
-    sprintf(retstr, "%05d", i);
+    sprintf(retstr, "% 5d", i);
 
     strncpy(data, retstr, buf - 1);
     data[buf - 1] = '\0';
@@ -563,10 +563,7 @@ void get_int_string(int i, char* data, int buf)
 
 void draw_texture(char message[15], int x, int y)
 {
-    /* Get the font. I should only be doing this once somewhere else */
-    TTF_Font* gCant = TTF_OpenFont("/usr/share/fonts/cantarell/Cantarell-Bold.otf", 32);
     SDL_Color textCol = {255, 255, 255};
-
     SDL_Surface* sfc_idle = TTF_RenderText_Solid(gCant, message, textCol);
     SDL_Texture* tex_idle = SDL_CreateTextureFromSurface(gRenderer, sfc_idle);
 
@@ -577,12 +574,6 @@ void draw_texture(char message[15], int x, int y)
     // printf("%d\n", texW);
 
     SDL_Rect rect_idle = {x, y, texW, texH};
-
-    // SDL_Rect rect_idle;
-    // rect_idle.x = x;
-    // rect_idle.y = y;
-    // rect_idle.w = strlen(message) * 24;
-    // rect_idle.h = 12 * 3;
     SDL_RenderCopy(gRenderer, tex_idle, NULL, &rect_idle);
     SDL_FreeSurface(sfc_idle);
     SDL_DestroyTexture(tex_idle);
@@ -594,13 +585,23 @@ void world_draw_menu_action(void)
     {
         SDL_Rect action_menu_bg;
         action_menu_bg.x = (SCREEN_WIDTH / 5) * 2;
-        action_menu_bg.y = SCREEN_HEIGHT / 12;
-        action_menu_bg.h = SCREEN_HEIGHT / 2;
-        action_menu_bg.w = SCREEN_WIDTH / 2;
+        action_menu_bg.y = SCREEN_HEIGHT / 10;
+        action_menu_bg.h = SCREEN_HEIGHT / 3.5;
+        action_menu_bg.w = SCREEN_WIDTH / 2.5;
 
         SDL_SetRenderDrawColor(gRenderer, 0xA0, 0xA0, 0xA0, 0xAA);
         SDL_RenderFillRect(gRenderer, &action_menu_bg);
         SDL_SetRenderDrawColor(gRenderer, 0x0, 0x0, 0x0, 0xAA);
         SDL_RenderFillRect(gRenderer, &action_menu_bg);
+
+        int y_space = 48;
+
+        /* Level */
+        draw_texture("TALK", (SCREEN_WIDTH / 5) * 2 + 40, action_menu_bg.y + y_space);
+        draw_texture("SPELL", (SCREEN_WIDTH / 5) * 2 + action_menu_bg.w - 140, action_menu_bg.y + y_space);
+        draw_texture("STATUS", (SCREEN_WIDTH / 5) * 2 + 40, action_menu_bg.y + y_space * 2);
+        draw_texture("ITEM", (SCREEN_WIDTH / 5) * 2 + action_menu_bg.w - 140, action_menu_bg.y + y_space * 2);
+        draw_texture("DOOR", (SCREEN_WIDTH / 5) * 2 + 40, action_menu_bg.y + y_space * 3);
+        draw_texture("SEARCH", (SCREEN_WIDTH / 5) * 2 + action_menu_bg.w - 140, action_menu_bg.y + y_space * 3);
     }
 }

@@ -18,6 +18,7 @@ SDL_Surface*    intro_image;
 SDL_Texture*    intro_texture;
 TTF_Font*       gFont;
 SDL_Event       event;
+TTF_Font*       gCant;
 const Uint8*    keystates;
 int             m_x;
 int             m_y;
