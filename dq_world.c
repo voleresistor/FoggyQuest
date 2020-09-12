@@ -14,7 +14,9 @@ int world_init_game(void)
     grid_rows       = SCREEN_HEIGHT / tile_size;
     grid_cols       = SCREEN_WIDTH / tile_size;
 
-    action_menu = false;
+    key_wait_buffer = 0;
+
+    in_menu = false;
 
     /*
         Init move speed based on scale
@@ -28,6 +30,22 @@ int world_init_game(void)
     {
         return EXIT_FAILURE;
     }
+
+    /* Define game control function pointers */
+    key_a = &world_action_left;
+    key_b = &world_action_unbound;
+    key_c = &world_action_cancel;
+    key_d = &world_action_right;
+    key_e = &world_action_select;
+    key_f = &world_action_unbound;
+    key_g = &world_action_unbound;
+    key_h = &world_action_unbound;
+    key_i = &world_action_unbound;
+    key_j = &world_action_unbound;
+    key_q = &world_action_interact;
+    key_s = &world_action_down;
+    key_w = &world_action_up;
+    key_x = &world_action_unbound;
 
     //world_main_menu();
     int game_result = world_main_loop();
@@ -66,8 +84,9 @@ int world_main_loop(void)
     while(!quit)
     {
         /* Handle events so we can close the window */
-        event_handler();
-        world_controls_handle_controls();
+        // event_handler();
+        // world_controls_handle_controls();
+        controls_handle_input();
 
         /*
             Transition map if necessary
@@ -353,7 +372,7 @@ void world_draw_background(int map_height_)
 void world_actors_move(AreaMap* m_)
 {
     // Don't allow actor movement in menus
-    if(action_menu)
+    if(in_menu)
     {
         return;
     }
@@ -436,7 +455,7 @@ void world_actors_update(AreaMap* m_)
 void world_hero_move(Actor* h_, AreaMap* m_)
 {
     // Don't allow actor movement in menus
-    if(action_menu)
+    if(in_menu)
     {
         hero_move = -1;
         h_->_idle_time = 0;
@@ -499,7 +518,7 @@ Tile* world_tile_lookup(AreaMap* m_, int row_, int col_)
 
 void world_menu_draw_idle(Actor* a_)
 {
-    if(a_->_idle_time >= IDLE_DELAY || action_menu)
+    if(a_->_idle_time >= IDLE_DELAY || in_menu)
     {
         /* Menu background */
         SDL_Rect idle_menu_bg;
@@ -554,7 +573,7 @@ void get_int_string(int i, char* data, int buf)
 
 void world_menu_draw_action(void)
 {
-    if(action_menu)
+    if(in_menu)
     {
         SDL_Rect action_menu_bg;
         action_menu_bg.x = (SCREEN_WIDTH / 5) * 2;
@@ -575,7 +594,82 @@ void world_menu_draw_action(void)
     }
 }
 
-void world_controls_handle_controls(void)
+void world_action_up(void)
 {
-    printf("W: %d\nA: %d\nS: %d\nD: %d\n\n", keystates[SDL_SCANCODE_W], keystates[SDL_SCANCODE_A], keystates[SDL_SCANCODE_S], keystates[SDL_SCANCODE_D]);
+    printf("world_action_up()\n");
+    if(in_menu)
+    {
+
+    }
+    else
+    {
+        hero_move = 0;
+    }
+}
+
+void world_action_down(void)
+{
+    printf("world_action_down()\n");
+    if(in_menu)
+    {
+
+    }
+    else
+    {
+        hero_move = 2;
+    }
+}
+
+void world_action_left(void)
+{
+    printf("world_action_left()\n");
+    if(in_menu)
+    {
+
+    }
+    else
+    {
+        hero_move = 3;
+    }
+}
+
+void world_action_right(void)
+{
+    printf("world_action_right()\n");
+    if(in_menu)
+    {
+
+    }
+    else
+    {
+        hero_move = 1;
+    }
+}
+
+void world_action_interact(void)
+{
+    printf("world_action_interact()\n");
+}
+
+void world_action_cancel(void)
+{
+    printf("world_action_cancel()\n");
+    if(in_menu)
+    {
+        in_menu = false;
+    }
+}
+
+void world_action_select(void)
+{
+    printf("world_action_select()\n");
+    if(!in_menu)
+    {
+        in_menu = true;
+    }
+}
+
+void world_action_unbound(void)
+{
+    return;
 }

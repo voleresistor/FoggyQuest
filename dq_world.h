@@ -6,7 +6,7 @@
 #include "dq_tile.h"
 #include "dq_actor.h"
 #include "dq_menu.h"
-#include "dq_controls.h"
+//#include "dq_controls.h"
 
 /* Map array size control */
 #define MAX_ROWS 50
@@ -66,5 +66,16 @@ extern FILE* world_open_map_file(char file_name_[20]);
 extern void world_menu_draw_idle(Actor* a_);
 extern void world_menu_draw_action(void);
 
+/* Control functions */
+extern void world_action_up(void);
+extern void world_action_down(void);
+extern void world_action_left(void);
+extern void world_action_right(void);
+extern void world_action_interact(void);
+extern void world_action_cancel(void);
+extern void world_action_select(void);
+extern void world_action_unbound(void);
+
 /* These are likely to die or change */
 extern void get_int_string(int i, char* data, int buf);
+extern void world_set_hero_move(int d);

@@ -8,7 +8,7 @@ int init_sdl()
     gRenderer   = NULL;
     gWindow     = NULL;
     gFont       = NULL;
-    gCant       = NULL;
+    gTextFont   = NULL;
 
     // Initialize SDL
     if(SDL_Init(SDL_INIT_VIDEO) < 0)
@@ -58,7 +58,7 @@ int init_sdl()
         SourceCodePro-Bold.otf
         Cantarell-Bold.otf
     */
-    gCant = TTF_OpenFont("font/SourceCodePro-Bold.otf", 32);
+    gTextFont = TTF_OpenFont("font/SourceCodePro-Bold.otf", 32);
 
     /* SDL blend settings */
     SDL_SetRenderDrawBlendMode(gRenderer, SDL_BLENDMODE_BLEND);
@@ -69,56 +69,50 @@ int init_sdl()
         return false;
     }
 
-    // Set keyboard repeat
-
     return EXIT_SUCCESS;
 }
 
 void event_sdl(SDL_Event* e)
 {
-    // Clicking x
-    if(e->type == SDL_QUIT)
-    {
-        quit = true;
-    }
+    
 
     /*
         TODO: eventually have this just return what buttons
         were pushed rather than directly changing game states.
     */
-    if(e->type == SDL_KEYDOWN)
-    {
-        switch(e->key.keysym.sym)
-        {
-            case SDLK_q:
-            quit = true;
-            break;
+    // if(e->type == SDL_KEYDOWN)
+    // {
+    //     switch(e->key.keysym.sym)
+    //     {
+    //         case SDLK_q:
+    //         quit = true;
+    //         break;
 
-            case SDLK_e:
-            action_menu = true;
-            break;
+    //         case SDLK_e:
+    //         action_menu = true;
+    //         break;
 
-            case SDLK_x:
-            action_menu = false;
-            break;
+    //         case SDLK_x:
+    //         action_menu = false;
+    //         break;
 
-            case SDLK_w:
-            hero_move = 0;
-            break;
+    //         case SDLK_w:
+    //         hero_move = 0;
+    //         break;
 
-            case SDLK_a:
-            hero_move = 3;
-            break;
+    //         case SDLK_a:
+    //         hero_move = 3;
+    //         break;
 
-            case SDLK_s:
-            hero_move = 2;
-            break;
+    //         case SDLK_s:
+    //         hero_move = 2;
+    //         break;
 
-            case SDLK_d:
-            hero_move = 1;
-            break;
-        }
-    }
+    //         case SDLK_d:
+    //         hero_move = 1;
+    //         break;
+    //     }
+    // }
 }
 
 void close_sdl()
@@ -146,24 +140,7 @@ void close_sdl()
 
 void event_handler()
 {
-    /*
-        Handle events
-
-        Even though I'm using KeyBoardState, this is still
-        necessary to poll the mouse and keyboard state for
-        SDL_GetKeyBoardState and SDL_GetMouseState.
-    */
-    while(SDL_PollEvent(&event) != 0)
-    {
-        event_sdl(&event);
-    }
-
-    /* Handle mouse and keyboard input */
-    SDL_GetMouseState(&m_x, &m_y);
-    //printf("MouseX: %d\tMouseY: %d\n\n", m_x, m_y);
-
-    /* TODO: Handle this in a function */
-    keystates = SDL_GetKeyboardState(NULL);
+    
 }
 
 void draw_window(void)
@@ -248,7 +225,7 @@ void video_draw_menu_window(SDL_Rect* menu_rect)
 void video_draw_text(char message[15], int x, int y)
 {
     SDL_Color textCol = {255, 255, 255};
-    SDL_Surface* sfc_idle = TTF_RenderText_Solid(gCant, message, textCol);
+    SDL_Surface* sfc_idle = TTF_RenderText_Solid(gTextFont, message, textCol);
     SDL_Texture* tex_idle = SDL_CreateTextureFromSurface(gRenderer, sfc_idle);
 
     /* Query that texture */
@@ -261,4 +238,60 @@ void video_draw_text(char message[15], int x, int y)
     SDL_RenderCopy(gRenderer, tex_idle, NULL, &rect_idle);
     SDL_FreeSurface(sfc_idle);
     SDL_DestroyTexture(tex_idle);
+}
+
+void controls_handle_input(void)
+{
+    /* Buffer to slow down keypresses? */
+    if(key_wait_buffer < 2)
+    {
+        key_wait_buffer++;
+        return;
+    }
+    else
+    {
+        key_wait_buffer = 0;
+    }
+
+    /*
+        Poll events into the appropriate buffers
+    */
+    while(SDL_PollEvent(&event) != 0)
+    {
+        /* Click X on the window */
+        if(event.type == SDL_QUIT)
+        {
+            quit = true;
+        }
+    }
+
+    /* Handle mouse and keyboard input */
+    SDL_GetMouseState(&m_x, &m_y);
+    keystates = SDL_GetKeyboardState(NULL);
+    //printf("MouseX: %d\tMouseY: %d\n\n", m_x, m_y);
+
+    if(keystates[SDL_SCANCODE_A] == 1) key_a();
+    if(keystates[SDL_SCANCODE_B] == 1) key_b();
+    if(keystates[SDL_SCANCODE_C] == 1) key_c();
+    if(keystates[SDL_SCANCODE_D] == 1) key_d();
+    if(keystates[SDL_SCANCODE_E] == 1) key_e();
+    if(keystates[SDL_SCANCODE_F] == 1) key_f();
+    if(keystates[SDL_SCANCODE_G] == 1) key_g();
+    if(keystates[SDL_SCANCODE_H] == 1) key_h();
+    if(keystates[SDL_SCANCODE_I] == 1) key_i();
+    if(keystates[SDL_SCANCODE_Q] == 1) key_q();
+    if(keystates[SDL_SCANCODE_S] == 1) key_s();
+    if(keystates[SDL_SCANCODE_W] == 1) key_w();
+    if(keystates[SDL_SCANCODE_X] == 1) key_x();
+    
+    // printf("SDL_EventType: %d\n", event.key.type);
+    printf("\tSDL_KEYUP: %d\n\tSDL_KEYDOWN: %d\n\tSDL_PRESSED: %d\n\tSDL_RELEASED: %d\n\n", SDL_KEYUP, SDL_KEYDOWN, SDL_PRESSED, SDL_RELEASED);
+    if(event.key.type == SDL_PRESSED)
+    {
+        printf("SDL_KEYDOWN: %d\n", event.key.keysym.sym);
+    }
+    else if(event.key.type == SDL_KEYUP)
+    {
+        printf("SDL_KEYUP: %d\n", event.key.keysym.sym);
+    }
 }

@@ -37,3 +37,16 @@ extern int main(void);
     22. Move SDL calls to dq_sdl module
     23. organize c files
 */
+
+/*
+    NOTES
+
+    Controls
+        define functions for controls in dq_world
+        dq_controls provides function pointers
+        dq_world populates function pointers
+
+        dq_world calls dq_sdl:event_handler directly to get *event updated
+        dq_world:world_controls_handle_controls passes keypress to dq_controls
+        dq_controls parses keypress to call appropriate function pointer
+*/
