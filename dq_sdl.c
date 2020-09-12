@@ -243,14 +243,10 @@ void video_draw_text(char message[15], int x, int y)
 void controls_handle_input(void)
 {
     /* Buffer to slow down keypresses? */
-    if(key_wait_buffer < 2)
+    if(key_wait_buffer < 6)
     {
         key_wait_buffer++;
         return;
-    }
-    else
-    {
-        key_wait_buffer = 0;
     }
 
     /*
@@ -263,6 +259,12 @@ void controls_handle_input(void)
         {
             quit = true;
         }
+    }
+
+    if(event.key.type == SDL_TEXTINPUT)
+    {
+        // printf("SDL_TEXTINPUT\n");
+        key_wait_buffer = 0;
     }
 
     /* Handle mouse and keyboard input */
@@ -283,15 +285,4 @@ void controls_handle_input(void)
     if(keystates[SDL_SCANCODE_S] == 1) key_s();
     if(keystates[SDL_SCANCODE_W] == 1) key_w();
     if(keystates[SDL_SCANCODE_X] == 1) key_x();
-    
-    // printf("SDL_EventType: %d\n", event.key.type);
-    printf("\tSDL_KEYUP: %d\n\tSDL_KEYDOWN: %d\n\tSDL_PRESSED: %d\n\tSDL_RELEASED: %d\n\n", SDL_KEYUP, SDL_KEYDOWN, SDL_PRESSED, SDL_RELEASED);
-    if(event.key.type == SDL_PRESSED)
-    {
-        printf("SDL_KEYDOWN: %d\n", event.key.keysym.sym);
-    }
-    else if(event.key.type == SDL_KEYUP)
-    {
-        printf("SDL_KEYUP: %d\n", event.key.keysym.sym);
-    }
 }

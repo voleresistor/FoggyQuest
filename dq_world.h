@@ -24,9 +24,22 @@ typedef struct {
     Actor _actors[25];
 } AreaMap;
 
-/* Global poopoo */
-// Nothing to see here
+/* Game modes */
+enum GameMode {
+    /* Menus */
+    MAIN_MENU = 0x10,
+    ACTION_MENU,
+    COMBAT_MENU,
+    DIALOG_MENU,
+    
+    /* Map Navigation */
+    WORLD_MAP = 0x33,
+    AREA_MAP,
 
+    /* Game state control */
+    NEW_GAME = 0x69,
+    QUIT_GAME
+};
 
 /* Main game controls */
 extern int world_init_game();

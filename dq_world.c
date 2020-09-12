@@ -596,7 +596,7 @@ void world_menu_draw_action(void)
 
 void world_action_up(void)
 {
-    printf("world_action_up()\n");
+    // printf("world_action_up()\n");
     if(in_menu)
     {
 
@@ -609,7 +609,7 @@ void world_action_up(void)
 
 void world_action_down(void)
 {
-    printf("world_action_down()\n");
+    // printf("world_action_down()\n");
     if(in_menu)
     {
 
@@ -622,7 +622,7 @@ void world_action_down(void)
 
 void world_action_left(void)
 {
-    printf("world_action_left()\n");
+    // printf("world_action_left()\n");
     if(in_menu)
     {
 
@@ -635,7 +635,7 @@ void world_action_left(void)
 
 void world_action_right(void)
 {
-    printf("world_action_right()\n");
+    // printf("world_action_right()\n");
     if(in_menu)
     {
 
@@ -653,7 +653,7 @@ void world_action_interact(void)
 
 void world_action_cancel(void)
 {
-    printf("world_action_cancel()\n");
+    // printf("world_action_cancel()\n");
     if(in_menu)
     {
         in_menu = false;
@@ -662,7 +662,7 @@ void world_action_cancel(void)
 
 void world_action_select(void)
 {
-    printf("world_action_select()\n");
+    // printf("world_action_select()\n");
     if(!in_menu)
     {
         in_menu = true;

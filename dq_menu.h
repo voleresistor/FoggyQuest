@@ -1,13 +1,13 @@
 /* dq_menu.h */
 
-enum GameMode {
-    TESTMODE = 0,
-    MAIN,
-    MAP,
-    COMBAT,
-    IDLE,
-    BUY
-};
+// enum GameMode {
+//     TESTMODE = 0,
+//     MAIN,
+//     MAP,
+//     COMBAT,
+//     IDLE,
+//     BUY
+// };
 
 enum MapOpt {
     MENUTEST = 0,
