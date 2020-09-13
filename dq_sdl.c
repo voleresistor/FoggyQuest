@@ -272,17 +272,42 @@ void controls_handle_input(void)
     keystates = SDL_GetKeyboardState(NULL);
     //printf("MouseX: %d\tMouseY: %d\n\n", m_x, m_y);
 
-    if(keystates[SDL_SCANCODE_A] == 1) key_a();
-    if(keystates[SDL_SCANCODE_B] == 1) key_b();
-    if(keystates[SDL_SCANCODE_C] == 1) key_c();
-    if(keystates[SDL_SCANCODE_D] == 1) key_d();
-    if(keystates[SDL_SCANCODE_E] == 1) key_e();
-    if(keystates[SDL_SCANCODE_F] == 1) key_f();
-    if(keystates[SDL_SCANCODE_G] == 1) key_g();
-    if(keystates[SDL_SCANCODE_H] == 1) key_h();
-    if(keystates[SDL_SCANCODE_I] == 1) key_i();
-    if(keystates[SDL_SCANCODE_Q] == 1) key_q();
-    if(keystates[SDL_SCANCODE_S] == 1) key_s();
-    if(keystates[SDL_SCANCODE_W] == 1) key_w();
-    if(keystates[SDL_SCANCODE_X] == 1) key_x();
+    // if(event.cbutton.state)
+
+    if(keystates[SDL_SCANCODE_A] == 1) key_press_a();
+    if(keystates[SDL_SCANCODE_B] == 1) key_press_b();
+    if(keystates[SDL_SCANCODE_C] == 1) key_press_c();
+    if(keystates[SDL_SCANCODE_D] == 1) key_press_d();
+    if(keystates[SDL_SCANCODE_E] == 1) key_press_e();
+    if(keystates[SDL_SCANCODE_F] == 1) key_press_f();
+    if(keystates[SDL_SCANCODE_G] == 1) key_press_g();
+    if(keystates[SDL_SCANCODE_H] == 1) key_press_h();
+    if(keystates[SDL_SCANCODE_I] == 1) key_press_i();
+    if(keystates[SDL_SCANCODE_J] == 1) key_press_j();
+    if(keystates[SDL_SCANCODE_K] == 1) key_press_k();
+    if(keystates[SDL_SCANCODE_L] == 1) key_press_l();
+    if(keystates[SDL_SCANCODE_M] == 1) key_press_m();
+    if(keystates[SDL_SCANCODE_N] == 1) key_press_n();
+    if(keystates[SDL_SCANCODE_O] == 1) key_press_o();
+    if(keystates[SDL_SCANCODE_P] == 1) key_press_p();
+    if(keystates[SDL_SCANCODE_Q] == 1) key_press_q();
+    if(keystates[SDL_SCANCODE_R] == 1) key_press_r();
+    if(keystates[SDL_SCANCODE_S] == 1) key_press_s();
+    if(keystates[SDL_SCANCODE_T] == 1) key_press_t();
+    if(keystates[SDL_SCANCODE_U] == 1) key_press_u();
+    if(keystates[SDL_SCANCODE_V] == 1) key_press_v();
+    if(keystates[SDL_SCANCODE_W] == 1) key_press_w();
+    if(keystates[SDL_SCANCODE_X] == 1) key_press_x();
+    if(keystates[SDL_SCANCODE_Y] == 1) key_press_y();
+    if(keystates[SDL_SCANCODE_Z] == 1) key_press_z();
+    if(keystates[SDL_SCANCODE_0] == 1) key_press_0();
+    if(keystates[SDL_SCANCODE_1] == 1) key_press_1();
+    if(keystates[SDL_SCANCODE_2] == 1) key_press_2();
+    if(keystates[SDL_SCANCODE_3] == 1) key_press_3();
+    if(keystates[SDL_SCANCODE_4] == 1) key_press_4();
+    if(keystates[SDL_SCANCODE_5] == 1) key_press_5();
+    if(keystates[SDL_SCANCODE_6] == 1) key_press_6();
+    if(keystates[SDL_SCANCODE_7] == 1) key_press_7();
+    if(keystates[SDL_SCANCODE_8] == 1) key_press_8();
+    if(keystates[SDL_SCANCODE_9] == 1) key_press_9();
 }

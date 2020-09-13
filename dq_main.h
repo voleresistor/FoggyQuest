@@ -36,6 +36,7 @@ extern int main(void);
     21. Scripting API for cutscenes/chapters/Gwaelin's Love
     22. Move SDL calls to dq_sdl module
     23. organize c files
+    24. SDL_GameController?
 */
 
 /*

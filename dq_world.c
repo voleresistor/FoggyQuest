@@ -32,20 +32,42 @@ int world_init_game(void)
     }
 
     /* Define game control function pointers */
-    key_a = &world_action_left;
-    key_b = &world_action_unbound;
-    key_c = &world_action_cancel;
-    key_d = &world_action_right;
-    key_e = &world_action_select;
-    key_f = &world_action_unbound;
-    key_g = &world_action_unbound;
-    key_h = &world_action_unbound;
-    key_i = &world_action_unbound;
-    key_j = &world_action_unbound;
-    key_q = &world_action_interact;
-    key_s = &world_action_down;
-    key_w = &world_action_up;
-    key_x = &world_action_unbound;
+    key_press_a = &world_action_left;
+    key_press_b = &world_action_unbound;
+    key_press_c = &world_action_cancel;
+    key_press_d = &world_action_right;
+    key_press_e = &world_action_select;
+    key_press_f = &world_action_unbound;
+    key_press_g = &world_action_unbound;
+    key_press_h = &world_action_unbound;
+    key_press_i = &world_action_unbound;
+    key_press_j = &world_action_unbound;
+    key_press_k = &world_action_unbound;
+    key_press_l = &world_action_unbound;
+    key_press_m = &world_action_unbound;
+    key_press_n = &world_action_unbound;
+    key_press_o = &world_action_unbound;
+    key_press_p = &world_action_unbound;
+    key_press_q = &world_action_interact;
+    key_press_r = &world_action_unbound;
+    key_press_s = &world_action_down;
+    key_press_t = &world_action_unbound;
+    key_press_u = &world_action_unbound;
+    key_press_v = &world_action_unbound;
+    key_press_w = &world_action_up;
+    key_press_x = &world_action_unbound;
+    key_press_y = &world_action_unbound;
+    key_press_z = &world_action_unbound;
+    key_press_0 = &world_action_unbound;
+    key_press_1 = &world_action_unbound;
+    key_press_2 = &world_action_unbound;
+    key_press_3 = &world_action_unbound;
+    key_press_4 = &world_action_unbound;
+    key_press_5 = &world_action_unbound;
+    key_press_6 = &world_action_unbound;
+    key_press_7 = &world_action_unbound;
+    key_press_8 = &world_action_unbound;
+    key_press_9 = &world_action_unbound;
 
     //world_main_menu();
     int game_result = world_main_loop();
