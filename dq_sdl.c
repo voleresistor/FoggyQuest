@@ -290,34 +290,10 @@ void controls_handle_input(void)
         key_wait_buffer = 0;
     }
 
-    /* Joystick/Gamepad buttons */
-    if(event.type == SDL_JOYBUTTONDOWN)
-    {
-        /* Buttons on controller 0 */
-        if(event.jbutton.which == 0)
-        {
-            /*
-                Buffalo SNES pad mapping:
-                    A           = 0
-                    B           = 1
-                    X           = 2
-                    Y           = 3
-                    L Shoulder  = 4
-                    R Shoulder  = 5
-                    Select      = 6
-                    Start       = 7
-            */
-            // printf("Gamepad Button: %d\n", event.jbutton.button);
-            if(event.jbutton.button == 0) gamepad_b0();
-            if(event.jbutton.button == 1) gamepad_b1();
-            if(event.jbutton.button == 2) gamepad_b2();
-            if(event.jbutton.button == 3) gamepad_b3();
-            if(event.jbutton.button == 4) gamepad_b4();
-            if(event.jbutton.button == 5) gamepad_b5();
-            if(event.jbutton.button == 6) gamepad_b6();
-            if(event.jbutton.button == 7) gamepad_b7();
-        }
-    }
+    /* Get mouse and keyboard state */
+    SDL_GetMouseState(&m_x, &m_y);
+    keystates = SDL_GetKeyboardState(NULL);
+    //printf("MouseX: %d\tMouseY: %d\n\n", m_x, m_y);
 
     /* Joystick/Gamepad x/y axes */
     if(event.type == SDL_JOYAXISMOTION)
@@ -341,129 +317,160 @@ void controls_handle_input(void)
         }
     }
 
-    /* Get mouse and keyboard state */
-    SDL_GetMouseState(&m_x, &m_y);
-    keystates = SDL_GetKeyboardState(NULL);
-    //printf("MouseX: %d\tMouseY: %d\n\n", m_x, m_y);
+    /* Joystick/Gamepad buttons */
+    if(event.type == SDL_JOYBUTTONDOWN)
+    {
+        /* Buttons on controller 0 */
+        if(event.jbutton.which == 0)
+        {
+            // printf("Gamepad Button: %d\n", event.jbutton.button);
+            gp_bt[event.jbutton.button]();
+        }
+    }
+
 
     /*
         Even though we'd prefer gamepad as a primary, we still
         have these keyboard keys to fall back on. These might
         also be useful for grabbing characters straight from
         the keyboard for things like naming.
-
-        TODO: Add non-alphas and function keys?
     */
+    if(event.type == SDL_TEXTINPUT)
+    {
+        // printf("Keysym: %d\n", event.key.keysym.scancode);
+        kb_fp[event.key.keysym.scancode]();
+    }
+}
 
-    /* Alpha-numerics */
-    if(keystates[SDL_SCANCODE_A] == 1) key_press_a();
-    if(keystates[SDL_SCANCODE_B] == 1) key_press_b();
-    if(keystates[SDL_SCANCODE_C] == 1) key_press_c();
-    if(keystates[SDL_SCANCODE_D] == 1) key_press_d();
-    if(keystates[SDL_SCANCODE_E] == 1) key_press_e();
-    if(keystates[SDL_SCANCODE_F] == 1) key_press_f();
-    if(keystates[SDL_SCANCODE_G] == 1) key_press_g();
-    if(keystates[SDL_SCANCODE_H] == 1) key_press_h();
-    if(keystates[SDL_SCANCODE_I] == 1) key_press_i();
-    if(keystates[SDL_SCANCODE_J] == 1) key_press_j();
-    if(keystates[SDL_SCANCODE_K] == 1) key_press_k();
-    if(keystates[SDL_SCANCODE_L] == 1) key_press_l();
-    if(keystates[SDL_SCANCODE_M] == 1) key_press_m();
-    if(keystates[SDL_SCANCODE_N] == 1) key_press_n();
-    if(keystates[SDL_SCANCODE_O] == 1) key_press_o();
-    if(keystates[SDL_SCANCODE_P] == 1) key_press_p();
-    if(keystates[SDL_SCANCODE_Q] == 1) key_press_q();
-    if(keystates[SDL_SCANCODE_R] == 1) key_press_r();
-    if(keystates[SDL_SCANCODE_S] == 1) key_press_s();
-    if(keystates[SDL_SCANCODE_T] == 1) key_press_t();
-    if(keystates[SDL_SCANCODE_U] == 1) key_press_u();
-    if(keystates[SDL_SCANCODE_V] == 1) key_press_v();
-    if(keystates[SDL_SCANCODE_W] == 1) key_press_w();
-    if(keystates[SDL_SCANCODE_X] == 1) key_press_x();
-    if(keystates[SDL_SCANCODE_Y] == 1) key_press_y();
-    if(keystates[SDL_SCANCODE_Z] == 1) key_press_z();
-    if(keystates[SDL_SCANCODE_0] == 1) key_press_0();
-    if(keystates[SDL_SCANCODE_1] == 1) key_press_1();
-    if(keystates[SDL_SCANCODE_2] == 1) key_press_2();
-    if(keystates[SDL_SCANCODE_3] == 1) key_press_3();
-    if(keystates[SDL_SCANCODE_4] == 1) key_press_4();
-    if(keystates[SDL_SCANCODE_5] == 1) key_press_5();
-    if(keystates[SDL_SCANCODE_6] == 1) key_press_6();
-    if(keystates[SDL_SCANCODE_7] == 1) key_press_7();
-    if(keystates[SDL_SCANCODE_8] == 1) key_press_8();
-    if(keystates[SDL_SCANCODE_9] == 1) key_press_9();
+void controls_action_up(void)
+{
+    // printf("controls_action_up()\n");
+    if(in_menu)
+    {
 
-    /* Punctuation/Operation */
-    if(keystates[SDL_SCANCODE_APOSTROPHE] == 1)     key_press_apostrophe();
-    if(keystates[SDL_SCANCODE_BACKSLASH] == 1)      key_press_backslash();
-    if(keystates[SDL_SCANCODE_COMMA] == 1)          key_press_comma();
-    if(keystates[SDL_SCANCODE_EQUALS] == 1)         key_press_equals();
-    if(keystates[SDL_SCANCODE_GRAVE] == 1)          key_press_grave();
-    if(keystates[SDL_SCANCODE_PERIOD] == 1)         key_press_period();
-    if(keystates[SDL_SCANCODE_MINUS] == 1)          key_press_minus();
-    if(keystates[SDL_SCANCODE_LEFTBRACKET] == 1)    key_press_lbracket();
-    if(keystates[SDL_SCANCODE_RIGHTBRACKET] == 1)   key_press_rightbracket();
-    if(keystates[SDL_SCANCODE_SEMICOLON] == 1)      key_press_semicolon();
-    if(keystates[SDL_SCANCODE_SLASH] == 1)          key_press_slash();
-    if(keystates[SDL_SCANCODE_SPACE] == 1)          key_press_space();
+    }
+    else
+    {
+        hero_move = 0;
+    }
+}
 
-    /* Keypad */
-    if(keystates[SDL_SCANCODE_KP_0] == 1)           key_press_kp_0();
-    if(keystates[SDL_SCANCODE_KP_1] == 1)           key_press_kp_1();
-    if(keystates[SDL_SCANCODE_KP_2] == 1)           key_press_kp_2();
-    if(keystates[SDL_SCANCODE_KP_3] == 1)           key_press_kp_3();
-    if(keystates[SDL_SCANCODE_KP_4] == 1)           key_press_kp_4();
-    if(keystates[SDL_SCANCODE_KP_5] == 1)           key_press_kp_5();
-    if(keystates[SDL_SCANCODE_KP_6] == 1)           key_press_kp_6();
-    if(keystates[SDL_SCANCODE_KP_7] == 1)           key_press_kp_7();
-    if(keystates[SDL_SCANCODE_KP_8] == 1)           key_press_kp_8();
-    if(keystates[SDL_SCANCODE_KP_9] == 1)           key_press_kp_9();
-    if(keystates[SDL_SCANCODE_KP_DIVIDE] == 1)      key_press_kp_divide();
-    if(keystates[SDL_SCANCODE_KP_MINUS] == 1)       key_press_kp_minus();
-    if(keystates[SDL_SCANCODE_KP_MULTIPLY] == 1)    key_press_kp_multiply();
-    if(keystates[SDL_SCANCODE_KP_PLUS] == 1)        key_press_kp_plus();
-    if(keystates[SDL_SCANCODE_KP_ENTER] == 1)       key_press_kp_enter();
-    if(keystates[SDL_SCANCODE_KP_DECIMAL] == 1)     key_press_kp_decimal();
+void controls_action_down(void)
+{
+    // printf("controls_action_down()\n");
+    if(in_menu)
+    {
 
-    /* Function keys */
-    if(keystates[SDL_SCANCODE_F1] == 1)     key_press_f1();
-    if(keystates[SDL_SCANCODE_F2] == 1)     key_press_f2();
-    if(keystates[SDL_SCANCODE_F3] == 1)     key_press_f3();
-    if(keystates[SDL_SCANCODE_F4] == 1)     key_press_f4();
-    if(keystates[SDL_SCANCODE_F5] == 1)     key_press_f5();
-    if(keystates[SDL_SCANCODE_F6] == 1)     key_press_f6();
-    if(keystates[SDL_SCANCODE_F7] == 1)     key_press_f7();
-    if(keystates[SDL_SCANCODE_F8] == 1)     key_press_f8();
-    if(keystates[SDL_SCANCODE_F9] == 1)     key_press_f9();
-    if(keystates[SDL_SCANCODE_F10] == 1)    key_press_f10();
-    if(keystates[SDL_SCANCODE_F11] == 1)    key_press_f11();
-    if(keystates[SDL_SCANCODE_F12] == 1)    key_press_f12();
+    }
+    else
+    {
+        hero_move = 2;
+    }
+}
 
-    /* Other */
-    if(keystates[SDL_SCANCODE_DOWN] == 1)           key_press_down();
-    if(keystates[SDL_SCANCODE_UP] == 1)             key_press_up();
-    if(keystates[SDL_SCANCODE_LEFT] == 1)           key_press_left();
-    if(keystates[SDL_SCANCODE_RIGHT] == 1)          key_press_right();
-    if(keystates[SDL_SCANCODE_APPLICATION] == 1)    key_press_application();
-    if(keystates[SDL_SCANCODE_BACKSPACE] == 1)      key_press_backspace();
-    if(keystates[SDL_SCANCODE_CAPSLOCK] == 1)       key_press_capslock();
-    if(keystates[SDL_SCANCODE_END] == 1)            key_press_end();
-    if(keystates[SDL_SCANCODE_ESCAPE] == 1)         key_press_escape();
-    if(keystates[SDL_SCANCODE_HOME] == 1)           key_press_home();
-    if(keystates[SDL_SCANCODE_INSERT] == 1)         key_press_insert();
-    if(keystates[SDL_SCANCODE_LALT] == 1)           key_press_lalt();
-    if(keystates[SDL_SCANCODE_LCTRL] == 1)          key_press_lctrl();
-    if(keystates[SDL_SCANCODE_LSHIFT] == 1)         key_press_lshift();
-    if(keystates[SDL_SCANCODE_NUMLOCKCLEAR] == 1)   key_press_numlock();
-    if(keystates[SDL_SCANCODE_PAGEDOWN] == 1)       key_press_pgdown();
-    if(keystates[SDL_SCANCODE_PAGEUP] == 1)         key_press_pgup();
-    if(keystates[SDL_SCANCODE_PAUSE] == 1)          key_press_pause();
-    if(keystates[SDL_SCANCODE_PRINTSCREEN] == 1)    key_press_prtscrn();
-    if(keystates[SDL_SCANCODE_RALT] == 1)           key_press_ralt();
-    if(keystates[SDL_SCANCODE_RCTRL] == 1)          key_press_rctrl();
-    if(keystates[SDL_SCANCODE_RETURN] == 1)         key_press_return();
-    if(keystates[SDL_SCANCODE_RETURN2] == 1)        key_press_return2();
-    if(keystates[SDL_SCANCODE_RSHIFT] == 1)         key_press_rshift();
-    if(keystates[SDL_SCANCODE_SCROLLLOCK] == 1)     key_press_scrllck();    
-    if(keystates[SDL_SCANCODE_TAB] == 1)            key_press_tab();
+void controls_action_left(void)
+{
+    // printf("controls_action_left()\n");
+    if(in_menu)
+    {
+
+    }
+    else
+    {
+        hero_move = 3;
+    }
+}
+
+void controls_action_right(void)
+{
+    // printf("controls_action_right()\n");
+    if(in_menu)
+    {
+
+    }
+    else
+    {
+        hero_move = 1;
+    }
+}
+
+void controls_action_interact(void)
+{
+    printf("controls_action_interact()\n");
+}
+
+void controls_action_cancel(void)
+{
+    // printf("controls_action_cancel()\n");
+    if(in_menu)
+    {
+        in_menu = false;
+    }
+}
+
+void controls_action_select(void)
+{
+    // printf("controls_action_select()\n");
+    if(!in_menu)
+    {
+        in_menu = true;
+    }
+}
+
+void controls_action_unbound(void)
+{
+    return;
+}
+
+void controls_load_controls(char ctrl_conf[15])
+{
+    if(ctrl_conf == NULL)
+    {
+        /* Define game control function pointers */
+        /*
+            Buffalo SNES pad mapping:
+                A           = 0
+                B           = 1
+                X           = 2
+                Y           = 3
+                L Shoulder  = 4
+                R Shoulder  = 5
+                Select      = 6
+                Start       = 7
+        */
+        /* Set all gamepad buttons to unbound */
+        for(int i = 0; i < 32; i++)
+        {
+            gp_bt[i] = &controls_action_unbound;
+        }
+
+        /* Bind a few buttons */
+        gamepad_down    = &controls_action_down;
+        gamepad_up      = &controls_action_up;
+        gamepad_left    = &controls_action_left;
+        gamepad_right   = &controls_action_right;
+        gp_bt[0]        = &controls_action_select;
+        gp_bt[1]        = &controls_action_cancel;
+        gp_bt[2]        = &controls_action_interact;
+        gp_bt[3]        = &controls_action_interact;
+
+        /* Set all kb keys to unbound */
+        for(int i = 0; i < 512; i++)
+        {
+            kb_fp[i] = &controls_action_unbound;
+        }
+
+        /* Bind a few keys to other actions */
+        kb_fp[SDLK_a] = &controls_action_left;
+        kb_fp[SDLK_s] = &controls_action_down;
+        kb_fp[SDLK_d] = &controls_action_right;
+        kb_fp[SDLK_w] = &controls_action_up;
+        kb_fp[SDLK_c] = &controls_action_cancel;
+        kb_fp[SDLK_q] = &controls_action_interact;
+        kb_fp[SDLK_e] = &controls_action_select;
+    }
+    else
+    {
+        // Read in control mapping from file
+    }
 }

@@ -88,6 +88,7 @@ extern void world_action_interact(void);
 extern void world_action_cancel(void);
 extern void world_action_select(void);
 extern void world_action_unbound(void);
+extern void world_load_controls(char ctrl_conf[15]);
 
 /* These are likely to die or change */
 extern void get_int_string(int i, char* data, int buf);
