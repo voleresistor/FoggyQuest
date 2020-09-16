@@ -22,7 +22,7 @@ extern int main(void);
     07. Map editor
     08. Textures
     09. Sound
-    10. Improve controls
+    ***10. Improve controls
     11. Cave light?
     12. Vehicles (Boat, balloon, etc)
     13. Multiple party members
