@@ -4,7 +4,6 @@
 #include "lib/util.h"
 #include "dq_sdl.h"
 #include "dq_tile.h"
-#include "dq_actor.h"
 #include "dq_menu.h"
 //#include "dq_controls.h"
 

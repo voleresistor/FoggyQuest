@@ -1,6 +1,8 @@
 /* dq_world.c */
 
 #include "dq_world.h"
+#include "dq_actor.h"
+#include "dq_hero.h"
 
 /*
     _init()
@@ -56,8 +58,8 @@ int world_main_loop(void)
         This will also be initialized from a loaded
         savegame file.
     */
-    Actor* _hero = actor_new("Buns", HERO, 0, false, 1, 1, tile_size);
-    _hero->_idle_time = 0;
+    struct Hero* _hero = hero_new("Buns", 1, 1, tile_size);
+    _hero->_actor->_idle_time = 0;
     _hero->_level = 5;
     _hero->_xp = 2334;
     _hero->_cur_hp = 41;
