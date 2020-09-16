@@ -52,17 +52,17 @@ enum Facing {
 /* Actor controls */
 int move_speed;
 
-extern Actor* actor_new(char name_[15], int type_id_, int merchant_id_, bool stationary_, int row_, int col_, int tile_size_);
-extern Actor* actor_load(char b[255]);
+extern struct Actor* actor_new(char name_[15], int type_id_, int merchant_id_, bool stationary_, int row_, int col_, int tile_size_);
+extern struct Actor* actor_load(char b[255]);
 
-extern void actor_move(Actor* a_, int dir_, int dest_row_, int dest_col_);
-extern void actor_update(Actor* a_, int tile_size_);
-extern void actor_face(Actor* a_, int dir_);
-extern void actor_set_location(Actor* a_, int x_, int y_);
-extern void actor_set_grid(Actor* a_, int col_, int row_);
-extern void actor_set_on_link(Actor* a_, bool onlink_);
-extern void actor_identify(Actor* a_);
-extern bool actor_has_arrived(Actor* a_, int tile_size_);
-extern bool actor_will_move(Actor* a_);
+extern void actor_move(struct Actor* a_, int dir_, int dest_row_, int dest_col_);
+extern void actor_update(struct Actor* a_, int tile_size_);
+extern void actor_face(struct Actor* a_, int dir_);
+extern void actor_set_location(struct Actor* a_, int x_, int y_);
+extern void actor_set_grid(struct Actor* a_, int col_, int row_);
+extern void actor_set_on_link(struct Actor* a_, bool onlink_);
+extern void actor_identify(struct Actor* a_);
+extern bool actor_has_arrived(struct Actor* a_, int tile_size_);
+extern bool actor_will_move(struct Actor* a_);
 
 #endif

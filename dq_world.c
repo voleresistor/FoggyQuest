@@ -58,7 +58,7 @@ int world_main_loop(void)
         This will also be initialized from a loaded
         savegame file.
     */
-    struct Hero* _hero = hero_new("Buns", 1, 1, tile_size);
+    struct Hero* _hero = hero_new_hero("Buns", 1, 1, tile_size);
     _hero->_actor->_idle_time = 0;
     _hero->_level = 5;
     _hero->_xp = 2334;
@@ -79,16 +79,16 @@ int world_main_loop(void)
         /*
             Transition map if necessary
         */
-        Tile* _t = world_area_transition(_hero, _area_map);
+        Tile* _t = world_area_transition(_hero->_actor, _area_map);
         if(_t != NULL)
         {
             // printf("Transition: %s\n", _t->_link_map);
-            world_actor_transition(_hero, _t);
+            world_actor_transition(_hero->_actor, _t);
             _area_map = world_load_area(_t->_link_map);
         }
 
         /* Update the hero */
-        world_hero_move(_hero, _area_map);
+        world_hero_move(_hero->_actor, _area_map);
         // world_hero_update(_hero);
 
         /* Update the actors */
@@ -97,7 +97,7 @@ int world_main_loop(void)
 
         /* Draw the window */
         world_draw_map(_area_map);
-        world_draw_actor(_hero);
+        world_draw_actor(_hero->_actor);
         world_draw_actors(_area_map);
         world_menu_draw_idle(_hero);
         world_menu_draw_action();
@@ -121,7 +121,7 @@ AreaMap* world_load_area(char* file_name_)
     char link_name_[15];
     char map_path_[20];
 
-    Actor* a_;
+    struct Actor* a_;
     Tile* t_;
     Tile* l_;
     
@@ -150,7 +150,7 @@ AreaMap* world_load_area(char* file_name_)
             // printf("Actor: %s\n", buf);
             a_ = actor_load(buf);
             actor_set_location(a_, a_->_col * tile_size, a_->_row * tile_size);
-            m_->_actors[m_->_actor_count] = *a_;
+            m_->_actors[m_->_actor_count] = a_;
             //actor_identify(&(m_->_actors[m_->_actor_count]));
             m_->_actor_count++;
             break;
@@ -322,14 +322,14 @@ void world_draw_actors(AreaMap* m_)
 {
     for(int i = 0; i < m_->_actor_count; i++)
     {
-        Actor* a_ = &m_->_actors[i];
+        struct Actor* a_ = m_->_actors[i];
 
         // printf("%s:\nrow: %d\ty_pos: %d\ncol:%d\tx_pos:%d\n\n", a_->_name, a_->_row, a_->_y_pos, a_->_col, a_->_x_pos);
         world_draw_actor(a_);
     }
 }
 
-void world_draw_actor(Actor* a_)
+void world_draw_actor(struct Actor* a_)
 {
     // printf("%s:\nrow: %d\ty_pos: %d\ncol:%d\tx_pos:%d\n\n", a_->_name, a_->_row, a_->_y_pos, a_->_col, a_->_x_pos);
     video_set_actor_texture(a_->_type_id);
@@ -369,7 +369,7 @@ void world_actors_move(AreaMap* m_)
     {
         for(int i = 0; i < m_->_actor_count; i++)
         {
-            Actor* a_ = &m_->_actors[i];
+            struct Actor* a_ = m_->_actors[i];
             Tile* t_ = &(m_->_map[a_->_row][a_->_col]);
             // printf("Moving %s\n", a_->_name);
             if(t_->_is_passable)
@@ -388,7 +388,7 @@ void world_actors_move(AreaMap* m_)
     world_actors_update(m_);
 }
 
-void world_actor_move(Actor* a_, AreaMap* m_, DestTile* d_)
+void world_actor_move(struct Actor* a_, AreaMap* m_, DestTile* d_)
 {
     Tile* t_ = &m_->_map[d_->_row][d_->_col];
 
@@ -427,7 +427,7 @@ void world_actors_update(AreaMap* m_)
     {
         for(int i = 0; i < m_->_actor_count; i++)
         {
-            Actor* a_ = &m_->_actors[i];
+            struct Actor* a_ = m_->_actors[i];
             // printf("Updating %s\n", a_->_name);
 
             if(a_->_moving)
@@ -440,7 +440,7 @@ void world_actors_update(AreaMap* m_)
     }
 }
 
-void world_hero_move(Actor* h_, AreaMap* m_)
+void world_hero_move(struct Actor* h_, AreaMap* m_)
 {
     // Don't allow actor movement in menus
     if(in_menu)
@@ -462,7 +462,7 @@ void world_hero_move(Actor* h_, AreaMap* m_)
     world_hero_update(h_);
 }
 
-void world_hero_update(Actor* h_)
+void world_hero_update(struct Actor* h_)
 {
     if(h_->_idle_time < 180)
     {
@@ -476,7 +476,7 @@ void world_hero_update(Actor* h_)
     }
 }
 
-Tile* world_area_transition(Actor* h_, AreaMap* m_)
+Tile* world_area_transition(struct Actor* h_, AreaMap* m_)
 {
     Tile* t_ = &m_->_map[h_->_row][h_->_col];
     if(!h_->_on_link && !h_->_moving && strcmp(t_->_link_map, "NULL") != 0)
@@ -487,7 +487,7 @@ Tile* world_area_transition(Actor* h_, AreaMap* m_)
     return NULL;
 }
 
-void world_actor_transition(Actor* a_, Tile* t_)
+void world_actor_transition(struct Actor* a_, Tile* t_)
 {
     // printf("Hero on link tile:\n");
     // printf("New map: %s\n", t_->_link_map);
@@ -504,9 +504,9 @@ Tile* world_tile_lookup(AreaMap* m_, int row_, int col_)
     return t_;
 }
 
-void world_menu_draw_idle(Actor* a_)
+void world_menu_draw_idle(struct Hero* hero_)
 {
-    if(a_->_idle_time >= IDLE_DELAY || in_menu)
+    if(hero_->_actor->_idle_time >= IDLE_DELAY || in_menu)
     {
         /* Menu background */
         SDL_Rect idle_menu_bg;
@@ -517,34 +517,34 @@ void world_menu_draw_idle(Actor* a_)
         video_draw_menu_window(&idle_menu_bg);
 
         char data_int[7];
-        get_int_string(a_->_level, data_int, 6);
+        get_int_string(hero_->_level, data_int, 6);
 
         int y_space = 64;
-        video_draw_text(a_->_name, (SCREEN_WIDTH / 20 + idle_menu_bg.w) / 2 - strlen(a_->_name) * 8, idle_menu_bg.y + 10);
+        video_draw_text(hero_->_actor->_name, (SCREEN_WIDTH / 20 + idle_menu_bg.w) / 2 - strlen(hero_->_actor->_name) * 8, idle_menu_bg.y + 10);
 
         /* Level */
         video_draw_text("LV", SCREEN_WIDTH / 20 + 30, idle_menu_bg.y + y_space);
-        get_int_string(a_->_level, data_int, 6);
+        get_int_string(hero_->_level, data_int, 6);
         video_draw_text(data_int, (SCREEN_WIDTH / 20 + idle_menu_bg.w) - strlen(data_int) * 24 - 10, idle_menu_bg.y + y_space);
 
         /* HP */
         video_draw_text("HP", SCREEN_WIDTH / 20 + 30, idle_menu_bg.y + y_space * 2);
-        get_int_string(a_->_cur_hp, data_int, 6);
+        get_int_string(hero_->_cur_hp, data_int, 6);
         video_draw_text(data_int, (SCREEN_WIDTH / 20 + idle_menu_bg.w) - strlen(data_int) * 24 - 10, idle_menu_bg.y + y_space * 2);
 
         /* MP */
         video_draw_text("MP", SCREEN_WIDTH / 20 + 30, idle_menu_bg.y + y_space * 3);
-        get_int_string(a_->_cur_mp, data_int, 6);
+        get_int_string(hero_->_cur_mp, data_int, 6);
         video_draw_text(data_int, (SCREEN_WIDTH / 20 + idle_menu_bg.w) - strlen(data_int) * 24 - 10, idle_menu_bg.y + y_space * 3);
 
         /* Gold */
         video_draw_text("GD", SCREEN_WIDTH / 20 + 30, idle_menu_bg.y + y_space * 4);
-        get_int_string(a_->_gold, data_int, 6);
+        get_int_string(hero_->_gold, data_int, 6);
         video_draw_text(data_int, (SCREEN_WIDTH / 20 + idle_menu_bg.w) - strlen(data_int) * 24 - 10, idle_menu_bg.y + y_space * 4);
 
         /* XP */
         video_draw_text("XP", SCREEN_WIDTH / 20 + 30, idle_menu_bg.y + y_space * 5);
-        get_int_string(a_->_xp, data_int, 6);
+        get_int_string(hero_->_xp, data_int, 6);
         video_draw_text(data_int, (SCREEN_WIDTH / 20 + idle_menu_bg.w) - strlen(data_int) * 24 - 10, idle_menu_bg.y + y_space * 5);
 
     }

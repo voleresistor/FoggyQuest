@@ -90,7 +90,7 @@ struct InvItem* hero_inventory_get_item(struct InvItem* next_, int item_id_)
         next_ = hero_inventory_next(next_);
     }
 
-    if(next_->item_id_ == item_id_)
+    if(next_->_item_id == item_id_)
     {
         return next_;
     }
@@ -98,7 +98,7 @@ struct InvItem* hero_inventory_get_item(struct InvItem* next_, int item_id_)
     return NULL;
 }
 
-bool hero_inventory_remove(Actor* hero_, int item_id_)
+bool hero_inventory_remove(struct Hero* hero_, int item_id_)
 {
     if(hero_->_inv->_next != NULL)
     {
@@ -150,7 +150,7 @@ struct InvItem* hero_inventory_prev(struct InvItem* i_)
     return i_->_prev;
 }
 
-struct InvItem* heo_inventory_last(struct InvItem* i_)
+struct InvItem* hero_inventory_last(struct InvItem* i_)
 {
     if(i_->_next != NULL)
     {

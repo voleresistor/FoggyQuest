@@ -1,5 +1,5 @@
 # OBJS specifies which files to compile as part of the project
-OBJS = dq_main.c dq_sdl.c dq_world.c dq_tile.c dq_actor.c lib/util.c
+OBJS = dq_main.c dq_sdl.c dq_world.c dq_tile.c dq_actor.c dq_hero.c lib/util.c
 
 # CC specifies which compiler we're using
 CC = gcc

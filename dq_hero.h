@@ -1,4 +1,7 @@
 /* dq_hero.h */
+
+#include <stdbool.h>
+
 #ifndef DQ_HERO__
 #define DQ_HERO__
 
@@ -47,7 +50,7 @@ extern struct Hero* hero_new_hero(char name[15], int row, int col, int tile_size
 extern struct HeroInv* hero_new_inventory(void);
 extern struct InvItem* hero_new_inv_item(int item_id_);
 extern void hero_inventory_list(struct Hero* a_);
-extern bool hero_inventory_remove(struct Hero* a_, int item_id_);
+extern bool hero_inventory_remove(struct Hero* hero_, int item_id_);
 extern bool hero_inventory_add(struct Hero* a_, int item_id_);
 // extern int* hero_inventory_new(void);
 extern struct InvItem* hero_inventory_next(struct InvItem* i_);
