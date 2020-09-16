@@ -37,6 +37,7 @@ extern int main(void);
     22. Move SDL calls to dq_sdl module
     23. organize c files
     24. SDL_GameController?
+    25. Split player struct away from actor
 */
 
 /*
