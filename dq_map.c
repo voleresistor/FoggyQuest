@@ -160,7 +160,7 @@ void map_tile_add_link(struct AreaMap* m_, char b[255])
     l_ = m_->_map[link_data_[0]][link_data_[1]];
     tile_add_link(l_, link_data_[2], link_data_[3], link_name_);
     m_->_map[link_data_[0]][link_data_[1]] = l_;
-    //tile_identify(&(m_->_map[link_data_[0]][link_data_[1]]));
+    //tile_identify(m_->_map[link_data_[0]][link_data_[1]]);
 }
 
 void map_tile_add_door(struct AreaMap* m_, char b[255])
@@ -172,7 +172,7 @@ void map_tile_add_door(struct AreaMap* m_, char b[255])
     d_ = m_->_map[door_data_[0]][door_data_[1]];
     tile_add_door(d_, door_data_[2]);
     m_->_map[door_data_[0]][door_data_[1]] = d_;
-    //tile_identify(&(m_->_map[door_data_[0]][door_data_[1]]));
+    //tile_identify(m_->_map[door_data_[0]][door_data_[1]]);
 }
 
 void map_tile_add_chest(struct AreaMap* m_, char b[255])
@@ -184,5 +184,10 @@ void map_tile_add_chest(struct AreaMap* m_, char b[255])
     c_ = m_->_map[chest_data_[0]][chest_data_[1]];
     tile_add_chest(c_, chest_data_[2]);
     m_->_map[chest_data_[0]][chest_data_[1]] = c_;
-    //tile_identify(&(m_->_map[chest_data_[0]][chest_data_[1]]));
+    //tile_identify(m_->_map[chest_data_[0]][chest_data_[1]]);
+}
+
+struct Tile* map_get_tile(int col, int row)
+{
+    return _area_map->_map[row][col];
 }

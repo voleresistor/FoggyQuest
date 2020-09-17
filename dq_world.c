@@ -52,7 +52,7 @@ int world_main_loop(void)
         Eventually this will be fed a map name from
         a loaded savegame file.
     */
-    struct AreaMap* _area_map = map_load_area("testmap1f", tile_size);
+    _area_map = map_load_area("testmap1f", tile_size);
 
     /*
         Init the hero
@@ -204,6 +204,7 @@ void world_actors_move(struct AreaMap* m_)
             struct Actor* a_ = m_->_actors[i];
             struct Tile* t_ = m_->_map[a_->_row][a_->_col];
             // printf("Moving %s\n", a_->_name);
+            /* Ensure that the tile the actor is standing on is impassable */
             if(t_->_is_passable)
             {
                 tile_set_passable(t_, false);
@@ -212,45 +213,15 @@ void world_actors_move(struct AreaMap* m_)
             if(actor_will_move(a_))
             {
                 struct DestTile* d_ = tile_get_dest(a_->_col, a_->_row, rand_i(0, 4));
-                world_actor_move(a_, m_, d_);
+                struct Tile* dest = map_get_tile(d_->_row, d_->_col);
+                struct Tile* cur = map_get_tile(a_->_row, a_->_col);
+                actor_move_actor(a_, cur, dest, d_->_dir);
+                free(d_);
             }
         }
     }
 
     world_actors_update(m_);
-}
-
-void world_actor_move(struct Actor* a_, struct AreaMap* m_, struct DestTile* d_)
-{
-    struct Tile* t_ = m_->_map[d_->_row][d_->_col];
-
-    if(tile_is_passable(t_))
-    {
-        // printf("[%d, %d] is passable\n", row_, col_);
-        if(a_->_row != d_->_row || a_->_col != d_->_col)
-        {
-            /* Get the values before they're updated */
-            int col_ = a_->_col;
-            int row_ = a_->_row;
-
-            /* Update the actor */
-            // printf("[%d, %d] is different\n", row_, col_);
-            actor_move(a_, d_->_dir, d_->_row, d_->_col);
-
-            /* Make destination tile impassable */
-            tile_set_passable(t_, false);
-            // printf("Tile [%d, %d] now impassable\n", d_->_row, d_->_col);
-
-            /* Make current tile passable again */
-            struct Tile* t_ = m_->_map[row_][col_];
-            tile_set_passable(t_, true);
-            // printf("Tile [%d, %d] now passable\n", row_, col_);
-        }
-        else
-        {
-            actor_face(a_, d_->_dir);
-        }
-    }
 }
 
 void world_actors_update(struct AreaMap* m_)

@@ -1,6 +1,7 @@
 /* dq_actor.c */
 
 #include "dq_actor.h"
+#include "dq_tile.h"
 
 struct Actor* actor_new(char name_[15], int type_id_, int merchant_id_, bool stationary_, int row_, int col_, int tile_size_)
 {
@@ -193,4 +194,34 @@ bool actor_will_move(struct Actor* a_)
 void actor_set_on_link(struct Actor* a_, bool onlink_)
 {
     a_->_on_link = onlink_;
+}
+
+void actor_move_actor(struct Actor* a_, struct Tile* c_, struct Tile* d_, int dir_)
+{
+    if(tile_is_passable(d_))
+    {
+        // printf("[%d, %d] is passable\n", row_, col_);
+        if(a_->_row != d_->_row || a_->_col != d_->_col)
+        {
+            /* Get the values before they're updated */
+            int col_ = a_->_col;
+            int row_ = a_->_row;
+
+            /* Update the actor */
+            // printf("[%d, %d] is different\n", row_, col_);
+            actor_move(a_, dir_, d_->_row, d_->_col);
+
+            /* Make destination tile impassable */
+            tile_set_passable(d_, false);
+            // printf("Tile [%d, %d] now impassable\n", d_->_row, d_->_col);
+
+            /* Make current tile passable again */
+            tile_set_passable(c_, true);
+            // printf("Tile [%d, %d] now passable\n", row_, col_);
+        }
+        else
+        {
+            actor_face(a_, dir_);
+        }
+    }
 }

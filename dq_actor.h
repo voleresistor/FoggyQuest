@@ -6,6 +6,9 @@
 #include <stdio.h>
 #include "lib/util.h"
 
+/* Forward declarations from external components outside of ifndef? */
+struct Tile;
+
 #ifndef DQ_ACTOR__
 #define DQ_ACTOR__
 
@@ -56,6 +59,7 @@ extern struct Actor* actor_new(char name_[15], int type_id_, int merchant_id_, b
 extern struct Actor* actor_load(char b[255]);
 
 extern void actor_move(struct Actor* a_, int dir_, int dest_row_, int dest_col_);
+extern void actor_move_actor(struct Actor* a_, struct Tile* c_, struct Tile* d_, int dir_);
 extern void actor_update(struct Actor* a_, int tile_size_);
 extern void actor_face(struct Actor* a_, int dir_);
 extern void actor_set_location(struct Actor* a_, int x_, int y_);

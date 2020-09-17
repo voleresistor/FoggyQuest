@@ -195,7 +195,10 @@ void hero_move_hero(struct Actor* h_, struct AreaMap* m_)
     if(hero_move >= 0 && !h_->_moving)
     {
         struct DestTile* d_ = tile_get_dest(h_->_col, h_->_row, hero_move);
-        world_actor_move(h_, m_, d_);
+        struct Tile* dest = map_get_tile(d_->_row, d_->_col);
+        struct Tile* cur = map_get_tile(h_->_row, h_->_col);
+        actor_move_actor(h_, cur, dest, d_->_dir);
+        free(d_);
         h_->_idle_time = 0;
 
         hero_move = -1;

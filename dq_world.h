@@ -7,14 +7,15 @@
 #include "dq_menu.h"
 //#include "dq_controls.h"
 
-#ifndef DQ_WORLD__
-#define DQ_WORLD__
-
+/* Forward declarations from external components outside of ifndef? */
 struct Hero;
 struct Actor;
 struct AreaMap;
 struct Tile;
 struct DestTile;
+
+#ifndef DQ_WORLD__
+#define DQ_WORLD__
 
 /* Game modes */
 enum GameMode {
@@ -39,7 +40,7 @@ extern int world_main_loop(void);
 
 /* Change */
 extern void world_actors_move(struct AreaMap* m_);
-extern void world_actor_move(struct Actor* a_, struct AreaMap* m_, struct DestTile* d_);
+extern void world_actor_move(struct Actor* a_, struct Tile* c_, struct Tile* d_, int dir_);
 extern void world_actors_update(struct AreaMap* m_);
 extern void world_tile_add_link(struct AreaMap* m_, char b[255]);
 extern void world_tile_add_door(struct AreaMap* m_, char b[255]);

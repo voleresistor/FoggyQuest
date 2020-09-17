@@ -2,15 +2,16 @@
 
 #include <stdbool.h>
 
-#ifndef DQ_HERO__
-#define DQ_HERO__
-
+/* Forward declarations from external components outside of ifndef? */
 struct Actor;
 struct InvItem;
 struct HeroInv;
 struct Hero;
 struct Tile;
 struct AreaMap;
+
+#ifndef DQ_HERO__
+#define DQ_HERO__
 
 struct InvItem {
     struct InvItem* _prev;
