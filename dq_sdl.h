@@ -23,7 +23,6 @@ TTF_Font*       gTextFont;
 const Uint8*    keystates;
 int             m_x;
 int             m_y;
-int             hero_move;
 
 /* Keyboard alpha-numeric function pointers */
 void (*kb_fp[512])(void);
@@ -33,16 +32,14 @@ void (*gamepad_down)(void);
 void (*gamepad_left)(void);
 void (*gamepad_right)(void);
 
-/* Area render control */
-int tile_size;
-int tile_cols;
-int grid_rows;
-int grid_cols;
-
 /* Game control */
 bool quit;
 bool in_menu;
 int key_wait_buffer;
+
+int tile_cols;
+int grid_rows;
+int grid_cols;
 
 extern int init_sdl(void);
 

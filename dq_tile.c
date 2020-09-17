@@ -2,9 +2,9 @@
 
 #include "dq_tile.h"
 
-Tile* tile_new(int texture_, int chest_id_, int door_id_, int link_row_, int link_col_, int mob_level_, float enc_rate_, bool is_active_, char* link_map_)
+struct Tile* tile_new(int texture_, int chest_id_, int door_id_, int link_row_, int link_col_, int mob_level_, float enc_rate_, bool is_active_, char* link_map_)
 {
-    Tile* t_ = malloc(sizeof(Tile));
+    struct Tile* t_ = malloc(sizeof(struct Tile));
 
     t_->_tile_texture    = texture_;
     t_->_chest_id        = chest_id_;
@@ -27,7 +27,7 @@ Tile* tile_new(int texture_, int chest_id_, int door_id_, int link_row_, int lin
     return t_;
 }
 
-Tile* tile_load(char b[255])
+struct Tile* tile_load(char b[255])
 {
     int my_ints[5];
     float e_rate;
@@ -37,7 +37,7 @@ Tile* tile_load(char b[255])
         &my_ints[0], &my_ints[1], &my_ints[2], &my_ints[3], &my_ints[4]);
 
     // row;col;texture;chest_id;door_id;row:col:mob_level:encounter_rate:link_map
-    Tile* t_ = malloc(sizeof(Tile));
+    struct Tile* t_ = malloc(sizeof(struct Tile));
     t_->_row             = my_ints[0];
     t_->_col             = my_ints[1];
     t_->_tile_texture    = my_ints[2];
@@ -61,26 +61,26 @@ Tile* tile_load(char b[255])
     return t_;
 }
 
-void tile_add_door(Tile* t_, int type_)
+void tile_add_door(struct Tile* t_, int type_)
 {
     t_->_door_id = type_;
     t_->_is_passable = false;
 }
 
-void tile_add_chest(Tile* t_, int contents_)
+void tile_add_chest(struct Tile* t_, int contents_)
 {
     t_->_chest_id = contents_;
     t_->_is_passable = false;
 }
 
-void tile_add_link(Tile* t_, int row_, int col_, char link_map_[15])
+void tile_add_link(struct Tile* t_, int row_, int col_, char link_map_[15])
 {
     t_->_link_row = row_;
     t_->_link_col = col_;
     strcpy(t_->_link_map, link_map_);
 }
 
-void tile_identify(Tile* t_)
+void tile_identify(struct Tile* t_)
 {
     printf("Tile: [%d,%d](%d)\n", t_->_row, t_->_col, t_->_is_active);
     printf("Texture: %d\n", t_->_tile_texture);
@@ -92,19 +92,19 @@ void tile_identify(Tile* t_)
     printf("\n");
 }
 
-void tile_open_door(Tile* t)
+void tile_open_door(struct Tile* t)
 {
 
 }
 
-void tile_open_chest(Tile* t)
+void tile_open_chest(struct Tile* t)
 {
 
 }
 
-DestTile* tile_get_dest(int col_, int row_, int dir_)
+struct DestTile* tile_get_dest(int col_, int row_, int dir_)
 {
-    DestTile* d_ = malloc(sizeof(DestTile));
+    struct DestTile* d_ = malloc(sizeof(struct DestTile));
     d_->_row = row_;
     d_->_col = col_;
     d_->_dir = dir_;
@@ -135,12 +135,12 @@ DestTile* tile_get_dest(int col_, int row_, int dir_)
     return d_;
 }
 
-bool tile_is_passable(Tile* t_)
+bool tile_is_passable(struct Tile* t_)
 {
     return t_->_is_passable;
 }
 
-void tile_set_passable(Tile* t_, bool passable)
+void tile_set_passable(struct Tile* t_, bool passable)
 {
     t_->_is_passable = passable;
 }

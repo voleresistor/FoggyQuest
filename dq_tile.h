@@ -3,6 +3,9 @@
 #include <string.h>
 #include <stdio.h>
 
+#ifndef DQ_TILE__
+#define DQ_TILE__
+
 enum Tiles {
     // Impassable tiles
     WALL = 10,
@@ -32,7 +35,7 @@ enum Tiles {
     TRAP
 };
 
-typedef struct {
+struct Tile {
     int _row;
     int _col;
     int _tile_texture;
@@ -45,23 +48,25 @@ typedef struct {
     bool _is_passable;
     bool _is_active;
     char _link_map[15];
-} Tile;
+};
 
-typedef struct {
+struct DestTile {
     int _row;
     int _col;
     int _dir;
-} DestTile;
+};
 
-extern Tile* tile_new(int texture_, int chest_id_, int door_id_, int link_row_, int link_col_, int mob_level_, float enc_rate_, bool is_active_, char link_map_[15]);
-extern Tile* tile_load(char b[255]);
+extern struct Tile* tile_new(int texture_, int chest_id_, int door_id_, int link_row_, int link_col_, int mob_level_, float enc_rate_, bool is_active_, char link_map_[15]);
+extern struct Tile* tile_load(char b[255]);
 
-extern void tile_open_door(Tile* t);
-extern void tile_open_chest(Tile* t);
-extern DestTile* tile_get_dest(int col_, int row_, int dir_);
-extern bool tile_is_passable(Tile* t_);
-extern void tile_set_passable(Tile* t_, bool passable);
-extern void tile_identify(Tile* t_);
-extern void tile_add_door(Tile* t_, int type_);
-extern void tile_add_chest(Tile* t_, int contents_);
-extern void tile_add_link(Tile* t_, int row_, int col_, char link_map_[15]);
+extern void tile_open_door(struct Tile* t);
+extern void tile_open_chest(struct Tile* t);
+extern struct DestTile* tile_get_dest(int col_, int row_, int dir_);
+extern bool tile_is_passable(struct Tile* t_);
+extern void tile_set_passable(struct Tile* t_, bool passable);
+extern void tile_identify(struct Tile* t_);
+extern void tile_add_door(struct Tile* t_, int type_);
+extern void tile_add_chest(struct Tile* t_, int contents_);
+extern void tile_add_link(struct Tile* t_, int row_, int col_, char link_map_[15]);
+
+#endif

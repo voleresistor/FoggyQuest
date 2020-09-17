@@ -9,6 +9,8 @@ struct Actor;
 struct InvItem;
 struct HeroInv;
 struct Hero;
+struct Tile;
+struct AreaMap;
 
 struct InvItem {
     struct InvItem* _prev;
@@ -44,7 +46,14 @@ struct Hero {
 
 #define MAX_INV 8
 
+int hero_move;
+int tile_size;
+
 extern struct Hero* hero_new_hero(char name[15], int row, int col, int tile_size);
+
+/* Movement */
+extern void hero_move_hero(struct Actor* h_, struct AreaMap* m_);
+extern void hero_update(struct Actor* h_);
 
 /* Inventory functions */
 extern struct HeroInv* hero_new_inventory(void);

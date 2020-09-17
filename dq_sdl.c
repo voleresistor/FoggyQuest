@@ -1,6 +1,7 @@
 /* dq_sdl.c */
 
 #include "dq_sdl.h"
+#include "dq_hero.h"
 
 int init_sdl()
 {

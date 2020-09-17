@@ -2,6 +2,8 @@
 
 #include "dq_hero.h"
 #include "dq_actor.h"
+#include "dq_map.h"
+#include "dq_tile.h"
 
 struct Hero* hero_new_hero(char name[15], int row, int col, int tile_size)
 {
@@ -178,4 +180,40 @@ void hero_inventory_list(struct Hero* hero_)
     }
 
     printf("\n");
+}
+
+void hero_move_hero(struct Actor* h_, struct AreaMap* m_)
+{
+    // Don't allow actor movement in menus
+    // if(in_menu)
+    // {
+    //     hero_move = -1;
+    //     h_->_idle_time = 0;
+    //     return;
+    // }
+
+    if(hero_move >= 0 && !h_->_moving)
+    {
+        struct DestTile* d_ = tile_get_dest(h_->_col, h_->_row, hero_move);
+        world_actor_move(h_, m_, d_);
+        h_->_idle_time = 0;
+
+        hero_move = -1;
+    }
+
+    hero_update(h_);
+}
+
+void hero_update(struct Actor* h_)
+{
+    if(h_->_idle_time < 180)
+    {
+        h_->_idle_time++;
+    }
+
+    if(h_->_moving)
+    {
+        actor_update(h_, tile_size);
+        return;
+    }
 }
