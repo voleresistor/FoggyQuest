@@ -1,6 +1,9 @@
 /* dq_world.c */
+#include <string.h>
 
 #include "dq_world.h"
+#include "dq_log.h"
+#include "dq_log.h"
 #include "dq_tile.h"
 #include "dq_map.h"
 #include "dq_actor.h"
@@ -21,6 +24,9 @@ int world_init_game(void)
     key_wait_buffer = 0;
 
     in_menu = false;
+
+    /* Define a default log path */
+    strcpy(log_root, "logs/");
 
     /*
         Init move speed based on scale
