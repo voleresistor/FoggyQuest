@@ -146,12 +146,25 @@ struct AreaMap* map_load_area(char* file_name_, int tile_size)
 
 struct Tile* map_area_transition(struct Actor* h_, struct AreaMap* m_)
 {
+    char log_msg_[255];
+
     struct Tile* t_ = m_->_map[h_->_row][h_->_col];
+
+    sprintf(log_msg_, "Hero grid: [%d, %d]\0", h_->_col, h_->_row);
+    log_write_log(log_msg_, this_func, DQDEBUG);
+
     if(!h_->_on_link && !h_->_moving && strcmp(t_->_link_map, "NULL") != 0)
     {
         return t_;
+
+        sprintf(log_msg_, "Transition tile: [%d/%d]\0", t_->_col, t_->_row);
+        log_write_log(log_msg_, this_func, DQINFO);
+        sprintf(log_msg_, "Linked map: %s\0", t_->_link_map);
+        log_write_log(log_msg_, this_func, DQDEBUG);
     }
 
+    // sprintf(log_msg_, "No map transition required.");
+    // log_write_log(log_msg_, this_func, DQDEBUG);
     return NULL;
 }
 

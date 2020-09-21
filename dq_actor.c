@@ -1,6 +1,7 @@
 /* dq_actor.c */
 
 #include "dq_actor.h"
+#include "dq_log.h"
 #include "dq_tile.h"
 
 struct Actor* actor_new(char name_[15], int type_id_, int merchant_id_, bool stationary_, int row_, int col_, int tile_size_)
@@ -57,7 +58,7 @@ void actor_identify(struct Actor* a_)
     printf("\n");
 }
 
-void actor_move(struct Actor* a_, int dir_, int dest_row_, int dest_col_)
+void actor_move(struct Actor* a_, int dir_, int dest_col_, int dest_row_)
 {
     actor_face(a_, dir_);
     
@@ -76,6 +77,8 @@ void actor_move(struct Actor* a_, int dir_, int dest_row_, int dest_col_)
 
 void actor_update(struct Actor* a_, int tile_size_)
 {
+    char log_msg_[255];
+
     if(actor_has_arrived(a_, tile_size_))
     {
         a_->_moving = false;
@@ -85,23 +88,27 @@ void actor_update(struct Actor* a_, int tile_size_)
     {
         switch(a_->_facing)
         {
-            case 0:
-            // printf("%s move [%d,%d] - [%d,%d]\n", a_->_name, a_->_y_pos, a_->_x_pos, a_->_y_pos - move_speed, a_->_x_pos);
+            case 1:
+            sprintf(log_msg_, "%s move [%d,%d] - [%d,%d]\0", a_->_name, a_->_x_pos, a_->_y_pos, a_->_x_pos, a_->_y_pos - move_speed);
+            log_write_log(log_msg_, this_func, DQDEBUG);
             actor_set_location(a_, a_->_x_pos, a_->_y_pos -= move_speed);
             break;
 
-            case 1:
-            // printf("%s move [%d,%d] - [%d,%d]\n", a_->_name, a_->_y_pos, a_->_x_pos, a_->_y_pos, a_->_x_pos + move_speed);
+            case 2:
+            sprintf(log_msg_, "%s move [%d,%d] - [%d,%d]\0", a_->_name, a_->_x_pos, a_->_y_pos, a_->_x_pos + move_speed, a_->_y_pos);
+            log_write_log(log_msg_, this_func, DQDEBUG);
             actor_set_location(a_, a_->_x_pos += move_speed, a_->_y_pos);
             break;
 
-            case 2:
-            // printf("%s move [%d,%d] - [%d,%d]\n", a_->_name, a_->_y_pos, a_->_x_pos, a_->_y_pos + move_speed, a_->_x_pos);
+            case 3:
+            sprintf(log_msg_, "%s move [%d,%d] - [%d,%d]\0", a_->_name, a_->_x_pos, a_->_y_pos, a_->_x_pos, a_->_y_pos + move_speed);
+            log_write_log(log_msg_, this_func, DQDEBUG);
             actor_set_location(a_, a_->_x_pos, a_->_y_pos += move_speed);
             break;
 
-            case 3:
-            // printf("%s move [%d,%d] - [%d,%d]\n", a_->_name, a_->_y_pos, a_->_x_pos, a_->_y_pos, a_->_x_pos - move_speed);
+            case 4:
+            sprintf(log_msg_, "%s move [%d,%d] - [%d,%d]\0", a_->_name, a_->_x_pos, a_->_y_pos, a_->_x_pos - move_speed, a_->_y_pos);
+            log_write_log(log_msg_, this_func, DQDEBUG);
             actor_set_location(a_, a_->_x_pos -= move_speed, a_->_y_pos);
             break;
         }
@@ -130,47 +137,60 @@ void actor_face(struct Actor* a_, int dir_)
 
 bool actor_has_arrived(struct Actor* a_, int tile_size_)
 {
+    char log_msg_[255];
     int abs_dist;
     switch(a_->_facing)
     {
-        case 0:
+        case 1:
         abs_dist = abs(a_->_row * tile_size_ - a_->_y_pos);
+        sprintf(log_msg_, "%s - Absolute distance from destination: %d (%d - %d)\0", a_->_name, abs_dist, a_->_row * tile_size_, a_->_y_pos);
+        log_write_log(log_msg_, this_func, DQDEBUG);
         if(abs_dist <= move_speed)
         {
-            // printf("%s moving North arrived at [%d,%d] ", a_->_name, a_->_row, a_->_col);
+            sprintf(log_msg_, "%s moving North arrived at [%d,%d] ", a_->_name, a_->_col, a_->_row);
+            log_write_log(log_msg_, this_func, DQDEBUG);
             actor_set_location(a_, a_->_x_pos, a_->_row * tile_size_);
             // printf("([%d, %d])\n", a_->_y_pos, a_->_x_pos);
             return true;
         }
         break;
 
-        case 1:
+        case 2:
         abs_dist = abs(a_->_col * tile_size_ - a_->_x_pos);
+        sprintf(log_msg_, "%s - Absolute distance from destination: %d\0", a_->_name, abs_dist);
+        log_write_log(log_msg_, this_func, DQDEBUG);
         if(abs_dist <= move_speed)
         {
-            // printf("%s moving East arrived at [%d,%d] ", a_->_name, a_->_row, a_->_col);
+            sprintf(log_msg_, "%s moving East arrived at [%d,%d]\0", a_->_name, a_->_col, a_->_row);
+            log_write_log(log_msg_, this_func, DQDEBUG);
             actor_set_location(a_, a_->_col * tile_size_, a_->_y_pos);
             // printf("([%d, %d])\n", a_->_y_pos, a_->_x_pos);
             return true;
         }
         break;
         
-        case 2:
+        case 3:
         abs_dist = abs(a_->_row * tile_size_ - a_->_y_pos);
+        sprintf(log_msg_, "%s - Absolute distance from destination: %d\0", a_->_name, abs_dist);
+        log_write_log(log_msg_, this_func, DQDEBUG);
         if(abs_dist <= move_speed)
         {
-            // printf("%s moving South arrived at [%d,%d] ", a_->_name, a_->_row, a_->_col);
+            sprintf(log_msg_, "%s moving South arrived at [%d,%d] ", a_->_name, a_->_col, a_->_row);
+            log_write_log(log_msg_, this_func, DQDEBUG);
             actor_set_location(a_, a_->_x_pos, a_->_row * tile_size_);
             // printf("([%d, %d])\n", a_->_y_pos, a_->_x_pos);
             return true;
         }
         break;
         
-        case 3:
+        case 4:
         abs_dist = abs(a_->_col * tile_size_ - a_->_x_pos);
+        sprintf(log_msg_, "%s - Absolute distance from destination: %d\0", a_->_name, abs_dist);
+        log_write_log(log_msg_, this_func, DQDEBUG);
         if(abs_dist <= move_speed)
         {
-            // printf("%s moving West arrived at [%d,%d] ", a_->_name, a_->_row, a_->_col);
+            sprintf(log_msg_, "%s moving West arrived at [%d,%d] ", a_->_name, a_->_col, a_->_row);
+            log_write_log(log_msg_, this_func, DQDEBUG);
             actor_set_location(a_, a_->_col * tile_size_, a_->_y_pos);
             // printf("([%d, %d])\n", a_->_y_pos, a_->_x_pos);
             return true;

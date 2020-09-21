@@ -1,6 +1,7 @@
 /* dq_tile.c */
 
 #include "dq_tile.h"
+#include "dq_log.h"
 
 struct Tile* tile_new(int texture_, int chest_id_, int door_id_, int link_row_, int link_col_, int mob_level_, float enc_rate_, bool is_active_, char* link_map_)
 {
@@ -104,6 +105,8 @@ void tile_open_chest(struct Tile* t)
 
 struct DestTile* tile_get_dest(int col_, int row_, int dir_)
 {
+    char log_msg_[255];
+
     struct DestTile* d_ = malloc(sizeof(struct DestTile));
     d_->_row = row_;
     d_->_col = col_;
@@ -111,24 +114,28 @@ struct DestTile* tile_get_dest(int col_, int row_, int dir_)
 
     switch(dir_)
     {
-        case 0: // North
+        case 1: // North
         d_->_row = row_ - 1;
-        // printf("Move North: [%d,%d] - [%d,%d]\n", row_, col_, d_->_row, d_->_col);
+        sprintf(log_msg_, "Move North: [%d,%d] - [%d,%d]\0", col_, row_, d_->_col, d_->_row);
+        log_write_log(log_msg_, this_func, DQDEBUG);
         break;
 
-        case 1: // East
+        case 2: // East
         d_->_col = col_ + 1;
-        // printf("Move East: [%d,%d] - [%d,%d]\n", row_, col_, d_->_row, d_->_col);
+        printf(log_msg_, "Move East: [%d,%d] - [%d,%d]\0", col_, row_, d_->_col, d_->_row);
+        log_write_log(log_msg_, this_func, DQDEBUG);
         break;
 
-        case 2: // South
+        case 3: // South
         d_->_row = row_ + 1;
-        // printf("Move South: [%d,%d] - [%d,%d]\n", row_, col_, d_->_row, d_->_col);
+        sprintf(log_msg_, "Move South: [%d,%d] - [%d,%d]\0", col_, row_, d_->_col, d_->_row);
+        log_write_log(log_msg_, this_func, DQDEBUG);
         break;
 
-        case 3: // West
+        case 4: // West
         d_->_col = col_ - 1;
-        // printf("Move West: [%d,%d] - [%d,%d]\n", row_, col_, d_->_row, d_->_col);
+        sprintf(log_msg_, "Move West: [%d,%d] - [%d,%d]\0", col_, row_, d_->_col, d_->_row);
+        log_write_log(log_msg_, this_func, DQDEBUG);
         break;
     }
 

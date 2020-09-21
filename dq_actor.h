@@ -46,6 +46,7 @@ enum TypeId {
 };
 
 enum Facing {
+    NOMOVE = 0,
     NORTH,
     EAST,
     SOUTH,

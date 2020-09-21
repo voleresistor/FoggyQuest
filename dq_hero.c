@@ -246,7 +246,7 @@ void hero_move_hero(struct Actor* h_, struct AreaMap* m_)
     //     return;
     // }
 
-    if(hero_move >= 0 && !h_->_moving)
+    if(hero_move > 0 && !h_->_moving)
     {
         struct DestTile* d_ = tile_get_dest(h_->_col, h_->_row, hero_move);
         struct Tile* dest = map_get_tile(d_->_row, d_->_col);
@@ -255,7 +255,7 @@ void hero_move_hero(struct Actor* h_, struct AreaMap* m_)
         free(d_);
         h_->_idle_time = 0;
 
-        hero_move = -1;
+        hero_move = 0;
     }
 
     hero_update(h_);
