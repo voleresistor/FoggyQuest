@@ -3,6 +3,7 @@
 #include <stdio.h>
 
 #include "dq_map.h"
+#include "dq_log.h"
 #include "dq_tile.h"
 #include "dq_actor.h"
 
@@ -10,16 +11,21 @@ FILE* map_open_map_file(char file_name_[20])
 {
     FILE* ptr;
     char map_path_[20];
+    char log_msg_[255];
 
     strcpy(map_path_, "map/");
     strcat(map_path_, file_name_);
     ptr = fopen(map_path_, "r");
     if(ptr == NULL)
     {
-        printf("Couldn't load map: %s\n", map_path_);
+        // printf("Couldn't load map: %s\n", map_path_);
+        sprintf(log_msg_, "Couldn't load map: %s", map_path_);
+        log_write_log(log_msg_, this_func, DQERROR);
         return NULL;
     }
 
+    sprintf(log_msg_, "Successfully loaded map: %s", map_path_);
+    log_write_log(log_msg_, this_func, DQDEBUG);
     return ptr;
 }
 

@@ -3,7 +3,6 @@
 
 #include "dq_world.h"
 #include "dq_log.h"
-#include "dq_log.h"
 #include "dq_tile.h"
 #include "dq_map.h"
 #include "dq_actor.h"
@@ -14,6 +13,19 @@
 */
 int world_init_game(void)
 {
+    /*
+        Init logging right away
+        
+        Working logs are a requirement for the game to
+        continue operating past this point.
+    */
+    char log_msg_[255];
+    if(log_init("logs/", DQDEBUG) != 0)
+    {
+        printf("log initialization failed!\n");
+        return EXIT_FAILURE;
+    }
+
     tile_cols       = 16;
     SCREEN_WIDTH    = 1024;
     SCREEN_HEIGHT   = 768;
@@ -22,11 +34,7 @@ int world_init_game(void)
     grid_cols       = SCREEN_WIDTH / tile_size;
 
     key_wait_buffer = 0;
-
-    in_menu = false;
-
-    /* Define a default log path */
-    strcpy(log_root, "logs/");
+    in_menu         = false;
 
     /*
         Init move speed based on scale
@@ -34,17 +42,39 @@ int world_init_game(void)
         divide tile size by number of frames of animation. More
         frames results in slower movement.
     */
-    move_speed      = tile_size / MOVE_UPDATES;
+    move_speed = tile_size / MOVE_UPDATES;
 
     if(init_sdl() != 0)
     {
         return EXIT_FAILURE;
-    }
+    }    
 
     controls_load_controls(NULL);
 
+    /* Log debug info about startup values */
+    sprintf(log_msg_, "tile_cols: %d\0", tile_cols);
+    log_write_log(log_msg_, this_func, DQDEBUG);
+    sprintf(log_msg_, "SCREEN_WIDTH: %d\0", SCREEN_WIDTH);
+    log_write_log(log_msg_, this_func, DQDEBUG);
+    sprintf(log_msg_, "SCREEN_HEIGHT: %d\0", SCREEN_HEIGHT);
+    log_write_log(log_msg_, this_func, DQDEBUG);
+    sprintf(log_msg_, "tile_size: %d\0", tile_size);
+    log_write_log(log_msg_, this_func, DQDEBUG);
+    sprintf(log_msg_, "grid_rows: %d\0", grid_rows);
+    log_write_log(log_msg_, this_func, DQDEBUG);
+    sprintf(log_msg_, "grid_cols: %d\0", grid_cols);
+    log_write_log(log_msg_, this_func, DQDEBUG);
+    sprintf(log_msg_, "move_speed: %d\0", move_speed);
+    log_write_log(log_msg_, this_func, DQDEBUG);
+    log_write_log("Launching: world_main_loop()", this_func, DQDEBUG);
+
     //world_main_menu();
     int game_result = world_main_loop();
+
+    sprintf(log_msg_, "world_main_loop() returned exit code: %d\0", game_result);
+    log_write_log(log_msg_, this_func, DQDEBUG);
+
+    log_close();
     close_sdl();
 
     return game_result;

@@ -2,6 +2,7 @@
 
 #include "dq_hero.h"
 #include "dq_actor.h"
+#include "dq_log.h"
 #include "dq_map.h"
 #include "dq_tile.h"
 
@@ -34,6 +35,37 @@ struct Hero* hero_new_hero(char name[15], int row, int col, int tile_size)
     new_h->_actor = new_a;
     new_h->_inv = new_i;
 
+    char log_msg_[255];
+    log_write_log("Hero successfully loaded.\0", this_func, DQINFO);
+    sprintf(log_msg_, "Hero name: %s\0", new_h->_actor->_name);
+    log_write_log(log_msg_, this_func, DQINFO);
+    sprintf(log_msg_, "Hero location: px[%d,%d] gr[%d,%d]\0", new_h->_actor->_x_pos, new_h->_actor->_y_pos, new_h->_actor->_col, new_h->_actor->_row);
+    log_write_log(log_msg_, this_func, DQDEBUG);
+    sprintf(log_msg_, "Hero level: %d\0", new_h->_level);
+    log_write_log(log_msg_, this_func, DQDEBUG);
+    sprintf(log_msg_, "Hero xp: %d\0", new_h->_xp);
+    log_write_log(log_msg_, this_func, DQDEBUG);
+    sprintf(log_msg_, "Hero gold: %d\0", new_h->_gold);
+    log_write_log(log_msg_, this_func, DQDEBUG);
+    sprintf(log_msg_, "Hero HP: %d/%d\0", new_h->_cur_hp, new_h->_max_hp);
+    log_write_log(log_msg_, this_func, DQDEBUG);
+    sprintf(log_msg_, "Hero MP: %d/%d\0", new_h->_cur_mp, new_h->_max_mp);
+    log_write_log(log_msg_, this_func, DQDEBUG);
+    sprintf(log_msg_, "Hero strength: %d\0", new_h->_str);
+    log_write_log(log_msg_, this_func, DQDEBUG);
+    sprintf(log_msg_, "Hero agility: %d\0", new_h->_agi);
+    log_write_log(log_msg_, this_func, DQDEBUG);
+    sprintf(log_msg_, "Hero resilience: %d\0", new_h->_res);
+    log_write_log(log_msg_, this_func, DQDEBUG);
+    sprintf(log_msg_, "Hero wisdom: %d\0", new_h->_wis);
+    log_write_log(log_msg_, this_func, DQDEBUG);
+    sprintf(log_msg_, "Hero luck: %d\0", new_h->_lck);
+    log_write_log(log_msg_, this_func, DQDEBUG);
+    sprintf(log_msg_, "Hero attack: %d\0", new_h->_atk);
+    log_write_log(log_msg_, this_func, DQDEBUG);
+    sprintf(log_msg_, "Hero defense: %d\0", new_h->_def);
+    log_write_log(log_msg_, this_func, DQDEBUG);
+
     return new_h;
 }
 
@@ -43,6 +75,7 @@ struct HeroInv* hero_new_inventory(void)
     new_->_inv_count = 0;
     new_->_next = NULL;
 
+    log_write_log("New empty inventory initialized.\0", this_func, DQDEBUG);
     return new_;
 }
 
@@ -55,21 +88,28 @@ struct InvItem* hero_new_inv_item(int item_id_)
     new_->_next             = NULL;
     new_->_prev             = NULL;
 
+    char log_msg_[255];
+    sprintf(log_msg_, "Created %d item of type %d\0", new_->_item_count, new_->_item_id);
+    log_write_log(log_msg_, this_func, DQDEBUG);
+
     return new_;
 }
 
 bool hero_inventory_add(struct Hero* hero_, int item_id_)
 {
+    char log_msg_[255];
+
     if(hero_->_inv->_inv_count < MAX_INV)
     {
         struct InvItem* new_ = hero_new_inv_item(item_id_);
 
         if(hero_->_inv->_next != NULL)
         {
-            // printf("_inv->_next != NULL\n");
             struct InvItem* last_ = hero_inventory_last(hero_->_inv->_next);
-            // printf("last_->_item_id: %d\n", last_->_item_id);
-            // printf("new_->_item_id: %d\n", new_->_item_id);
+            sprintf(log_msg_, "last_->_item_id: %d\0", last_->_item_id);
+            log_write_log(log_msg_, this_func, DQDEBUG);
+            sprintf(log_msg_, "new_->_item_id: %d\0", new_->_item_id);
+            log_write_log(log_msg_, this_func, DQDEBUG);
             last_->_next = new_;
             new_->_prev = last_;
         }
@@ -79,14 +119,19 @@ bool hero_inventory_add(struct Hero* hero_, int item_id_)
         }
 
         hero_->_inv->_inv_count++;
+        sprintf(log_msg_, "New inventory count: %d\0", hero_->_inv->_inv_count);
+        log_write_log(log_msg_, this_func, DQINFO);
         return true;
     }
 
+    log_write_log("Hero inventory is fill.\0", this_func, DQINFO);
     return false;
 }
 
 struct InvItem* hero_inventory_get_item(struct InvItem* next_, int item_id_)
 {
+    char log_msg_[255];
+
     while(next_->_item_id != item_id_ && next_->_next != NULL)
     {
         next_ = hero_inventory_next(next_);
@@ -94,14 +139,20 @@ struct InvItem* hero_inventory_get_item(struct InvItem* next_, int item_id_)
 
     if(next_->_item_id == item_id_)
     {
+        sprintf(log_msg_, "Found item type: %d\0", next_->_item_id);
+        log_write_log(log_msg_, this_func, DQDEBUG);
         return next_;
     }
 
+    sprintf(log_msg_, "Item type %d not found in inventory.\0", item_id_);
+    log_write_log(log_msg_, this_func, DQDEBUG);
     return NULL;
 }
 
 bool hero_inventory_remove(struct Hero* hero_, int item_id_)
 {
+    char log_msg_[255];
+
     if(hero_->_inv->_next != NULL)
     {
         struct InvItem* remove_ = hero_inventory_get_item(hero_->_inv->_next, item_id_);
@@ -109,6 +160,7 @@ bool hero_inventory_remove(struct Hero* hero_, int item_id_)
         /* if we don't find the item */
         if(remove_ == NULL)
         {
+            log_write_log("Item not found.\0", this_func, DQINFO);
             return false;
         }
 
@@ -117,6 +169,8 @@ bool hero_inventory_remove(struct Hero* hero_, int item_id_)
         if(prev_ == NULL && next_ == NULL)
         {
             hero_->_inv->_next = NULL;
+            sprintf(log_msg_, "Last item removed from %s inventory.\0", hero_->_actor->_name);
+            log_write_log(log_msg_, this_func, DQINFO);
         }
         else if(prev_ == NULL && next_ != NULL)
         {
@@ -134,8 +188,8 @@ bool hero_inventory_remove(struct Hero* hero_, int item_id_)
             n_next_->_prev = next_->_prev;
         }
 
-        // free(next_);
         hero_->_inv->_inv_count--;
+        sprintf(log_msg_, "Item id %d successfully removed from %s inventory.\0", item_id_, hero_->_actor->_name);
         return true;
     }
 
