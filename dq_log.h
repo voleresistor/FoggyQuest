@@ -20,6 +20,8 @@ struct LogInfo {
     FILE* log_ptr;
 };
 
+char log_msg_[255];
+
 static struct LogInfo* log_s;
 
 /* Public functions */

@@ -1,6 +1,7 @@
 /* dq_sdl.c */
 
 #include "dq_sdl.h"
+#include "dq_log.h"
 #include "dq_hero.h"
 
 int init_sdl()
@@ -15,7 +16,8 @@ int init_sdl()
     // Initialize SDL
     if(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK) < 0)
     {
-        printf("Couldn't initialize SDL! Error: %s\n", SDL_GetError());
+        sprintf(log_msg_, "Couldn't initialize SDL! Error: %s\0", SDL_GetError());
+        log_write_log(log_msg_, this_func, DQERROR);
         return EXIT_FAILURE;
     }
 
@@ -24,7 +26,8 @@ int init_sdl()
         SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
     if(gWindow == NULL)
     {
-        printf("Error creating SDL window! Error: %s\n", SDL_GetError());
+        sprintf(log_msg_, "Error creating SDL window! Error: %s\0", SDL_GetError());
+        log_write_log(log_msg_, this_func, DQERROR);
         return EXIT_FAILURE;
     }
 
@@ -32,7 +35,8 @@ int init_sdl()
     gRenderer = SDL_CreateRenderer(gWindow, -1, SDL_RENDERER_ACCELERATED);
     if(gRenderer == NULL)
     {
-        printf("Error creating SDL renderer! Error: %s\n", SDL_GetError());
+        sprintf(log_msg_, "Error creating SDL renderer! Error: %s\0", SDL_GetError());
+        log_write_log(log_msg_, this_func, DQERROR);
         return EXIT_FAILURE;
     }
     else
@@ -45,14 +49,16 @@ int init_sdl()
     int imgFlags = IMG_INIT_PNG;
     if(!(IMG_Init(imgFlags) & imgFlags))
     {
-        printf("Unable to init SDL_Image. Error: %s\n", IMG_GetError());
+        sprintf(log_msg_, "Unable to init SDL_Image. Error: %s\0", IMG_GetError());
+        log_write_log(log_msg_, this_func, DQERROR);
         return EXIT_FAILURE;
     }
 
     /* Initialize TTF fonts */
     if(TTF_Init() == -1)
     {
-        printf("Unable to init SDL_ttf. Error: %s\n", TTF_GetError());
+        sprintf(log_msg_, "Unable to init SDL_ttf. Error: %s\0", TTF_GetError());
+        log_write_log(log_msg_, this_func, DQERROR);
         return EXIT_FAILURE;
     }
 
@@ -74,7 +80,8 @@ int init_sdl()
     /* init joystick */
     if(SDL_NumJoysticks() < 1)
     {
-        printf("Warning: no joysticks detected.\n");
+        sprintf(log_msg_, "No joysticks detected.\0");
+        log_write_log(log_msg_, this_func, DQWARNING);
     }
     else
     {
@@ -82,7 +89,8 @@ int init_sdl()
         gGameController = SDL_JoystickOpen(0);
         if(gGameController == NULL)
         {
-            printf("Warning: Unable to open game controller! SDL Error: %S\n", SDL_GetError());
+            sprintf(log_msg_, "Unable to open game controller! SDL Error: %S\0", SDL_GetError());
+            log_write_log(log_msg_, this_func, DQERROR);
         }
     }
 
@@ -305,6 +313,8 @@ void controls_handle_input(void)
             /* x axis */
             if(event.jaxis.axis == 0)
             {
+                sprintf(log_msg_, "Gamepad/Joystick [%d] axis: (%d)%d\0", event.jaxis.which, event.jaxis.axis, event.jaxis.value);
+                log_write_log(log_msg_, this_func, DQDEBUG);
                 if(event.jaxis.value < 0) gamepad_left();
                 if(event.jaxis.value > 0) gamepad_right();
             }
@@ -312,6 +322,8 @@ void controls_handle_input(void)
             /* y axis */
             if(event.jaxis.axis == 1)
             {
+                sprintf(log_msg_, "Gamepad/Joystick [%d] axis: (%d)%d\0", event.jaxis.which, event.jaxis.axis, event.jaxis.value);
+                log_write_log(log_msg_, this_func, DQDEBUG);
                 if(event.jaxis.value < 0) gamepad_up();
                 if(event.jaxis.value > 0) gamepad_down();
             }
@@ -325,6 +337,8 @@ void controls_handle_input(void)
         if(event.jbutton.which == 0)
         {
             // printf("Gamepad Button: %d\n", event.jbutton.button);
+            sprintf(log_msg_, "Gamepad/Joystick [%d] button: %d\0", event.jbutton.which, event.jbutton.button);
+            log_write_log(log_msg_, this_func, DQDEBUG);
             gp_bt[event.jbutton.button]();
         }
     }
@@ -339,6 +353,8 @@ void controls_handle_input(void)
     if(event.type == SDL_TEXTINPUT)
     {
         // printf("Keysym: %d\n", event.key.keysym.scancode);
+        sprintf(log_msg_, "Keyboard key: %d\0", event.key.keysym.scancode);
+        log_write_log(log_msg_, this_func, DQDEBUG);
         kb_fp[event.key.keysym.scancode]();
     }
 }
@@ -352,7 +368,7 @@ void controls_action_up(void)
     }
     else
     {
-        hero_move = 0;
+        hero_move = 1;
     }
 }
 
@@ -365,7 +381,7 @@ void controls_action_down(void)
     }
     else
     {
-        hero_move = 2;
+        hero_move = 3;
     }
 }
 
@@ -378,7 +394,7 @@ void controls_action_left(void)
     }
     else
     {
-        hero_move = 3;
+        hero_move = 4;
     }
 }
 
@@ -391,7 +407,7 @@ void controls_action_right(void)
     }
     else
     {
-        hero_move = 1;
+        hero_move = 2;
     }
 }
 

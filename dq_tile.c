@@ -122,7 +122,7 @@ struct DestTile* tile_get_dest(int col_, int row_, int dir_)
 
         case 2: // East
         d_->_col = col_ + 1;
-        printf(log_msg_, "Move East: [%d,%d] - [%d,%d]\0", col_, row_, d_->_col, d_->_row);
+        sprintf(log_msg_, "Move East: [%d,%d] - [%d,%d]\0", col_, row_, d_->_col, d_->_row);
         log_write_log(log_msg_, this_func, DQDEBUG);
         break;
 
