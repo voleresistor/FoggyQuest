@@ -1,16 +1,40 @@
 /* dq_log.c */
 
 #include <stdlib.h>
-#include <stdio.h>
 #include <time.h>
 #include <string.h>
 
 #include "dq_log.h"
+#include "dq_locator.h"
 
 /*
-    Public API functions
+    Public functions
 */
-void log_write_log(char s_message[255], const char s_component[30], int i_lvl)
+void new_log(void)
+{
+    /*
+        Only init if not already done.
+        
+        This prevents overwriting an existing service.
+    */
+    if(system_log != NULL)
+    {
+        return;
+    }
+
+    system_log = malloc(sizeof(struct LogService));
+    system_log->write_log = &write_log;
+    system_log->init_log = &init_log;
+    system_log->close_log = &close_log;
+
+    /* Register with locator */
+    system_locator->provide_log(system_log);
+}
+
+/*
+    Service provider functions
+*/
+static void write_log(char s_message[255], const char s_component[30], int i_lvl)
 {
     /* Discard message if it's higher level than global log level */
     if(i_lvl > log_s->g_log_lvl)
@@ -28,11 +52,9 @@ void log_write_log(char s_message[255], const char s_component[30], int i_lvl)
 
     sprintf(log_msg, "%s[%s()] %s => %s\n", s_timestamp, s_component, s_level, s_message);
     fputs(log_msg, log_s->log_ptr);
-
-    // printf("%s", log_msg);
 }
 
-int log_init(char s_log_root[256], int i_lvl)
+static int init_log(char s_log_root[256], int i_lvl)
 {
     if(log_s != NULL)
     {
@@ -46,26 +68,25 @@ int log_init(char s_log_root[256], int i_lvl)
 
     *strncpy(log_s->log_path, s_log_root, strlen(s_log_root));
     *strncat(log_s->log_path, s_log_name, strlen(s_log_name));
-    // printf("%s() - path: %s\n", this_func, log_path);
-    // printf("%d\n", strlen(log_path));
 
     log_s->g_log_lvl = i_lvl;
 
     log_open_file(log_s->log_path);
 
     /* Log initialization of log component */
-    log_write_log("========== Foggy Quest v0.1a ==========", this_func, DQINFO);
-    log_write_log("Logging initialized.", this_func, DQINFO);
     char log_msg[255];
+    sprintf(log_msg, "========== Foggy Quest %s ==========", VERSION_STRING);
+    write_log(log_msg, this_func, DQINFO);
+    write_log("Logging initialized.", this_func, DQINFO);
     sprintf(log_msg, "Log file: %s", log_s->log_path);
-    log_write_log(log_msg, this_func, DQINFO);
+    write_log(log_msg, this_func, DQINFO);
 
     return 0;
 }
 
-void log_close(void)
+static void close_log(void)
 {
-    log_write_log("========== Log Closed ==========", this_func, DQINFO);
+    write_log("========== Log Closed ==========", this_func, DQINFO);
     fclose(log_s->log_ptr);
     free(log_s);
     log_s = NULL;
@@ -86,7 +107,6 @@ static void log_new_name(char name[55])
     strcpy(name, "DQ_Log_");
     *strncat(name, datestamp, strlen(datestamp));
     strcat(name, ".log");
-    // printf("%s(): %s\n", this_func, name);
 }
 
 static void log_get_datestamp(char datestamp[11])
@@ -98,7 +118,6 @@ static void log_get_datestamp(char datestamp[11])
     info = localtime(&rawtime);
 
     sprintf(datestamp, "%d-%02d-%02d", info->tm_year + 1900, info->tm_mon + 1, info->tm_mday);
-    // printf("%s(): %s\n", this_func, datestamp);
 }
 
 static void log_get_timestamp(char timestamp[9])
@@ -110,7 +129,6 @@ static void log_get_timestamp(char timestamp[9])
     info = localtime(&rawtime);
 
     sprintf(timestamp, "%02d:%02d:%02d", info->tm_hour, info->tm_min, info->tm_sec);
-    // printf("%s(): %s\n", this_func, timestamp);
 }
 
 static void log_get_levelstring(char s_lvl[9], int i_lvl)
@@ -133,6 +151,4 @@ static void log_get_levelstring(char s_lvl[9], int i_lvl)
         strcpy(s_lvl, "DEBUG");
         break;
     }
-
-    // printf("%s(): %s\n", this_func, s_lvl);
 }

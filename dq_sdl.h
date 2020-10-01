@@ -6,6 +6,9 @@
 #include <SDL2/SDL_image.h>
 #include <stdbool.h>
 
+struct Locator;
+struct LogService;
+
 unsigned int SCREEN_WIDTH;
 unsigned int SCREEN_HEIGHT;
 

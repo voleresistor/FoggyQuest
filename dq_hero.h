@@ -9,6 +9,8 @@ struct HeroInv;
 struct Hero;
 struct Tile;
 struct AreaMap;
+struct Locator;
+struct LogService;
 
 #ifndef DQ_HERO__
 #define DQ_HERO__

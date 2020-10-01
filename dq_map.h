@@ -1,11 +1,12 @@
 /* dq_map.h */
 
-/* Forward declarations from external components outside of ifndef? */
-struct Tile;
-struct Actor;
-
 #ifndef DQ_MAP__
 #define DQ_MAP__
+
+struct Tile;
+struct Actor;
+struct Locator;
+struct LogService;
 
 /* Map array size control */
 #define MAX_ROWS 50

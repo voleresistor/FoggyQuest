@@ -1,6 +1,15 @@
-/* dq_tile.c */
+/*
+    dq_tile.c
+
+    Provide the tile object for each game square within a map
+*/
+
+#include <stdlib.h>
+#include <string.h>
+#include <stdio.h>
 
 #include "dq_tile.h"
+#include "dq_locator.h"
 #include "dq_log.h"
 
 struct Tile* tile_new(int texture_, int chest_id_, int door_id_, int link_row_, int link_col_, int mob_level_, float enc_rate_, bool is_active_, char* link_map_)
@@ -117,25 +126,25 @@ struct DestTile* tile_get_dest(int col_, int row_, int dir_)
         case 1: // North
         d_->_row = row_ - 1;
         sprintf(log_msg_, "Move North: [%d,%d] - [%d,%d]\0", col_, row_, d_->_col, d_->_row);
-        log_write_log(log_msg_, this_func, DQDEBUG);
+        system_locator->get_log()->write_log(log_msg_, this_func, DQDEBUG);
         break;
 
         case 2: // East
         d_->_col = col_ + 1;
         sprintf(log_msg_, "Move East: [%d,%d] - [%d,%d]\0", col_, row_, d_->_col, d_->_row);
-        log_write_log(log_msg_, this_func, DQDEBUG);
+        system_locator->get_log()->write_log(log_msg_, this_func, DQDEBUG);
         break;
 
         case 3: // South
         d_->_row = row_ + 1;
         sprintf(log_msg_, "Move South: [%d,%d] - [%d,%d]\0", col_, row_, d_->_col, d_->_row);
-        log_write_log(log_msg_, this_func, DQDEBUG);
+        system_locator->get_log()->write_log(log_msg_, this_func, DQDEBUG);
         break;
 
         case 4: // West
         d_->_col = col_ - 1;
         sprintf(log_msg_, "Move West: [%d,%d] - [%d,%d]\0", col_, row_, d_->_col, d_->_row);
-        log_write_log(log_msg_, this_func, DQDEBUG);
+        system_locator->get_log()->write_log(log_msg_, this_func, DQDEBUG);
         break;
     }
 

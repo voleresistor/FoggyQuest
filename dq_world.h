@@ -1,20 +1,20 @@
-#include <stdbool.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include "lib/util.h"
-#include "dq_sdl.h"
-#include "dq_menu.h"
-//#include "dq_controls.h"
+/*
+    dq_world.h
 
-/* Forward declarations from external components outside of ifndef? */
+    Main workhorse of the program. If anything stands to become
+    monolithic in this codebase it's this component.
+*/
+
+#ifndef DQ_WORLD__
+#define DQ_WORLD__
+
+struct Locator;
+struct LogService;
 struct Hero;
 struct Actor;
 struct AreaMap;
 struct Tile;
 struct DestTile;
-
-#ifndef DQ_WORLD__
-#define DQ_WORLD__
 
 /* Game modes */
 enum GameMode {

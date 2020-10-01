@@ -1,12 +1,20 @@
 /* dq_world.c */
+#include <stdlib.h>
+#include <stdio.h>
 #include <string.h>
+#include <stdbool.h>
 
 #include "dq_world.h"
+#include "dq_locator.h"
 #include "dq_log.h"
+#include "dq_sdl.h"
+#include "dq_menu.h"
 #include "dq_tile.h"
 #include "dq_map.h"
 #include "dq_actor.h"
 #include "dq_hero.h"
+
+#include "lib/util.h"
 
 /*
     _init()
@@ -14,13 +22,16 @@
 int world_init_game(void)
 {
     /*
-        Init logging right away
-        
-        Working logs are a requirement for the game to
-        continue operating past this point.
+        Init service locator and logging service ASAP
+
+        We can be a little lazy about initing the remaining services.
+        We're requiring apparently working logs to carry forth from this
+        point.
     */
+    new_locator();
+    new_log();
     char log_msg_[255];
-    if(log_init("logs/", DQDEBUG) != 0)
+    if(system_locator->get_log()->init_log("logs/", DQDEBUG) != 0)
     {
         printf("log initialization failed!\n");
         return EXIT_FAILURE;
@@ -53,28 +64,34 @@ int world_init_game(void)
 
     /* Log debug info about startup values */
     sprintf(log_msg_, "tile_cols: %d\0", tile_cols);
-    log_write_log(log_msg_, this_func, DQDEBUG);
+    system_locator->get_log()->write_log(log_msg_, this_func, DQDEBUG);
     sprintf(log_msg_, "SCREEN_WIDTH: %d\0", SCREEN_WIDTH);
-    log_write_log(log_msg_, this_func, DQDEBUG);
+    system_locator->get_log()->write_log(log_msg_, this_func, DQDEBUG);
     sprintf(log_msg_, "SCREEN_HEIGHT: %d\0", SCREEN_HEIGHT);
-    log_write_log(log_msg_, this_func, DQDEBUG);
+    system_locator->get_log()->write_log(log_msg_, this_func, DQDEBUG);
     sprintf(log_msg_, "tile_size: %d\0", tile_size);
-    log_write_log(log_msg_, this_func, DQDEBUG);
+    system_locator->get_log()->write_log(log_msg_, this_func, DQDEBUG);
     sprintf(log_msg_, "grid_rows: %d\0", grid_rows);
-    log_write_log(log_msg_, this_func, DQDEBUG);
+    system_locator->get_log()->write_log(log_msg_, this_func, DQDEBUG);
     sprintf(log_msg_, "grid_cols: %d\0", grid_cols);
-    log_write_log(log_msg_, this_func, DQDEBUG);
+    system_locator->get_log()->write_log(log_msg_, this_func, DQDEBUG);
     sprintf(log_msg_, "move_speed: %d\0", move_speed);
-    log_write_log(log_msg_, this_func, DQDEBUG);
-    log_write_log("Launching: world_main_loop()", this_func, DQDEBUG);
+    system_locator->get_log()->write_log(log_msg_, this_func, DQDEBUG);
+    system_locator->get_log()->write_log("Launching: world_main_loop()", this_func, DQDEBUG);
 
     //world_main_menu();
     int game_result = world_main_loop();
 
     sprintf(log_msg_, "world_main_loop() returned exit code: %d\0", game_result);
-    log_write_log(log_msg_, this_func, DQDEBUG);
+    system_locator->get_log()->write_log(log_msg_, this_func, DQDEBUG);
 
-    log_close();
+    // This can live elsewhere
+    system_locator->get_log()->close_log();
+    free(system_locator);
+    free(system_log);
+    system_locator = NULL;
+    system_log = NULL;
+
     close_sdl();
 
     return game_result;

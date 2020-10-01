@@ -1,16 +1,13 @@
 /* dq_actor.h */
 
 #include <stdbool.h>
-#include <stdlib.h>
-#include <string.h>
-#include <stdio.h>
-#include "lib/util.h"
-
-/* Forward declarations from external components outside of ifndef? */
-struct Tile;
 
 #ifndef DQ_ACTOR__
 #define DQ_ACTOR__
+
+struct Tile;
+struct Locator;
+struct LogService;
 
 struct Actor {
     char _name[15];

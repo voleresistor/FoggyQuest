@@ -1,10 +1,16 @@
+/*
+    dq_tile.h
+
+    Provide the tile object for each game square within a map
+*/
+
 #include <stdbool.h>
-#include <stdlib.h>
-#include <string.h>
-#include <stdio.h>
 
 #ifndef DQ_TILE__
 #define DQ_TILE__
+
+struct Locator;
+struct LogService;
 
 enum Tiles {
     // Impassable tiles

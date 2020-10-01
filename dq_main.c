@@ -1,6 +1,7 @@
 /* dq_main.c */
 
 #include "dq_main.h"
+#include "dq_world.h" 
 
 /*
     main()

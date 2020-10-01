@@ -1,17 +1,19 @@
 /* dq_log.h */
 
-struct tm;
+#include <stdio.h>
 
 #ifndef DQ_LOG__
 #define DQ_LOG__
 
-#define this_func __func__
+#define VERSION_STRING "v0.1a"
 
-enum LOGLEVELS {
-    DQINFO = 1,
-    DQWARNING,
-    DQERROR,
-    DQDEBUG
+struct tm;
+struct Locator;
+
+struct LogService {
+    void (*write_log)(char message[255], const char component[20], int log_level);
+    int (*init_log)(char s_log_root[200], int i_lvl);
+    void (*close_log)(void);
 };
 
 struct LogInfo {
@@ -20,14 +22,25 @@ struct LogInfo {
     FILE* log_ptr;
 };
 
-char log_msg_[255];
+enum LOGLEVELS {
+    DQINFO = 1,
+    DQWARNING,
+    DQERROR,
+    DQDEBUG
+};
+
+// char log_msg_[255];
 
 static struct LogInfo* log_s;
+static struct LogService* system_log;
 
-/* Public functions */
-extern void log_write_log(char message[255], const char component[20], int log_level);
-extern int log_init(char s_log_root[200], int i_lvl);
-extern void log_close(void);
+/* Public function */
+void new_log(void);
+
+/* Service functions */
+static void write_log(char message[255], const char component[20], int log_level);
+static int init_log(char s_log_root[200], int i_lvl);
+static void close_log(void);
 
 /* Private functions */
 static void log_open_file(char name[256]);

@@ -1,8 +1,11 @@
 /* dq_map.c */
 
+#include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 
 #include "dq_map.h"
+#include "dq_locator.h"
 #include "dq_log.h"
 #include "dq_tile.h"
 #include "dq_actor.h"
@@ -20,12 +23,12 @@ FILE* map_open_map_file(char file_name_[20])
     {
         // printf("Couldn't load map: %s\n", map_path_);
         sprintf(log_msg_, "Couldn't load map: %s", map_path_);
-        log_write_log(log_msg_, this_func, DQERROR);
+        system_locator->get_log()->write_log(log_msg_, this_func, DQERROR);
         return NULL;
     }
 
     sprintf(log_msg_, "Successfully loaded map: %s", map_path_);
-    log_write_log(log_msg_, this_func, DQDEBUG);
+    system_locator->get_log()->write_log(log_msg_, this_func, DQDEBUG);
     return ptr;
 }
 
@@ -151,20 +154,20 @@ struct Tile* map_area_transition(struct Actor* h_, struct AreaMap* m_)
     struct Tile* t_ = m_->_map[h_->_row][h_->_col];
 
     // sprintf(log_msg_, "Hero grid: [%d, %d]\0", h_->_col, h_->_row);
-    // log_write_log(log_msg_, this_func, DQDEBUG);
+    // system_locator->get_log()->write_log(log_msg_, this_func, DQDEBUG);
 
     if(!h_->_on_link && !h_->_moving && strcmp(t_->_link_map, "NULL") != 0)
     {
         return t_;
 
         sprintf(log_msg_, "Transition tile: [%d/%d]\0", t_->_col, t_->_row);
-        log_write_log(log_msg_, this_func, DQINFO);
+        system_locator->get_log()->write_log(log_msg_, this_func, DQINFO);
         sprintf(log_msg_, "Linked map: %s\0", t_->_link_map);
-        log_write_log(log_msg_, this_func, DQDEBUG);
+        system_locator->get_log()->write_log(log_msg_, this_func, DQDEBUG);
     }
 
     // sprintf(log_msg_, "No map transition required.");
-    // log_write_log(log_msg_, this_func, DQDEBUG);
+    // system_locator->get_log()->write_log(log_msg_, this_func, DQDEBUG);
     return NULL;
 }
 
