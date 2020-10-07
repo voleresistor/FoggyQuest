@@ -27,18 +27,8 @@ const Uint8*    keystates;
 int             m_x;
 int             m_y;
 
-/* Keyboard alpha-numeric function pointers */
-void (*kb_fp[512])(void);
-void (*gp_bt[32])(void);
-void (*gamepad_up)(void);
-void (*gamepad_down)(void);
-void (*gamepad_left)(void);
-void (*gamepad_right)(void);
-
 /* Game control */
 bool quit;
-bool in_menu;
-int key_wait_buffer;
 
 int tile_cols;
 int grid_rows;
@@ -57,13 +47,13 @@ extern void video_draw_menu_window(SDL_Rect* menu_rect);
 extern void video_draw_text(char message[15], int x, int y);
 
 /* Controls */
-extern void controls_handle_input(void);
-extern void controls_load_controls(char ctrl_conf[15]);
-extern void controls_action_unbound(void);
-extern void controls_action_select(void);
-extern void controls_action_cancel(void);
-extern void controls_action_interact(void);
-extern void controls_action_right(void);
-extern void controls_action_left(void);
-extern void controls_action_down(void);
-extern void controls_action_up(void);
+// extern void controls_handle_input(void);
+// extern void controls_load_controls(char ctrl_conf[15]);
+// extern void controls_action_unbound(void);
+// extern void controls_action_select(void);
+// extern void controls_action_cancel(void);
+// extern void controls_action_interact(void);
+// extern void controls_action_right(void);
+// extern void controls_action_left(void);
+// extern void controls_action_down(void);
+// extern void controls_action_up(void);

@@ -11,6 +11,7 @@ struct Tile;
 struct AreaMap;
 struct Locator;
 struct LogService;
+struct ControlService;
 
 #ifndef DQ_HERO__
 #define DQ_HERO__
@@ -49,7 +50,7 @@ struct Hero {
 
 #define MAX_INV 8
 
-int hero_move;
+// int hero_move;
 int tile_size;
 
 extern struct Hero* hero_new_hero(char name[15], int row, int col, int tile_size);

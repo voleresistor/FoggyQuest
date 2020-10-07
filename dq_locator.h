@@ -10,7 +10,7 @@
 #define this_func __func__
 
 struct LogService;
-// struct ControlService;
+struct ControlService;
 // struct RenderService;
 // struct AudioService;
 
@@ -23,13 +23,13 @@ struct LogService;
 struct Locator {
     /* Providers */
     void (*provide_log)(struct LogService* log);
-    // void (*provide_control)(struct ControlService* control);
+    void (*provide_control)(struct ControlService* control);
     // void (*provide_render)(struct RenderService* render);
     // void (*provide_audio)(struct AudioService* audio);
 
     /* Access */
     struct LogService* (*get_log)(void);
-    // struct ControlService* (*get_control)(void);
+    struct ControlService* (*get_control)(void);
     // struct RenderService* (*get_render)(void);
     // struct AudioService* (*get_service)(void);
 };
@@ -38,7 +38,7 @@ struct Locator* system_locator;
 
 /* Services */
 static struct LogService* log_service;
-// static struct ControlService* control_service;
+static struct ControlService* control_service;
 // static struct RenderService* control_service;
 // static struct AudioService* audio_service;
 
@@ -52,8 +52,8 @@ static struct LogService* get_log(void);
 static void provide_log(struct LogService* log);
 
 /* Control */
-// static struct ControlService* get_control(void);
-// static void provide_control(struct ControlService* control);
+static struct ControlService* get_control(void);
+static void provide_control(struct ControlService* control);
 
 // /* Render */
 // static struct RenderService* get_render(void);

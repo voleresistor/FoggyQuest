@@ -5,9 +5,10 @@
 #include <stdbool.h>
 
 #include "dq_world.h"
+#include "dq_sdl.h"
 #include "dq_locator.h"
 #include "dq_log.h"
-#include "dq_sdl.h"
+#include "dq_controls.h"
 #include "dq_menu.h"
 #include "dq_tile.h"
 #include "dq_map.h"
@@ -60,7 +61,9 @@ int world_init_game(void)
         return EXIT_FAILURE;
     }    
 
-    controls_load_controls(NULL);
+    // controls_load_controls(NULL);
+    new_controls();
+    system_locator->get_control()->load_controls(NULL);
 
     /* Log debug info about startup values */
     sprintf(log_msg_, "tile_cols: %d\0", tile_cols);
@@ -81,6 +84,7 @@ int world_init_game(void)
 
     //world_main_menu();
     int game_result = world_main_loop();
+    // int game_result = 0;
 
     sprintf(log_msg_, "world_main_loop() returned exit code: %d\0", game_result);
     system_locator->get_log()->write_log(log_msg_, this_func, DQDEBUG);
@@ -127,9 +131,8 @@ int world_main_loop(void)
     while(!quit)
     {
         /* Handle events so we can close the window */
-        // event_handler();
-        // world_controls_handle_controls();
-        controls_handle_input();
+        // controls_handle_input();
+        system_locator->get_control()->handle_input();
 
         /*
             Transition map if necessary

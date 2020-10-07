@@ -31,9 +31,9 @@ extern void new_locator(void)
     log_service = NULL;
 
     /* Controls */
-    // system_locator->provide_control = &provide_control;
-    // system_locator->get_control = &get_control;
-    // control_service = NULL;
+    system_locator->provide_control = &provide_control;
+    system_locator->get_control = &get_control;
+    control_service = NULL;
 
     // /* Rendering */
     // system_locator->provide_render = &provide_render;
@@ -58,15 +58,15 @@ static void provide_log(struct LogService* log)
 }
 
 /* Control */
-// static struct ControlService* get_control(void)
-// {
-//     return control_service
-// }
+static struct ControlService* get_control(void)
+{
+    return control_service;
+}
 
-// static void provide_control(struct ControlService* control)
-// {
-//     control_service = control;
-// }
+static void provide_control(struct ControlService* control)
+{
+    control_service = control;
+}
 
 // /* Render */
 // static struct RenderService* get_render(void)

@@ -10,6 +10,7 @@
 
 struct Locator;
 struct LogService;
+struct ControlService;
 struct Hero;
 struct Actor;
 struct AreaMap;

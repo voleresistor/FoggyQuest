@@ -7,6 +7,7 @@
 #include "dq_actor.h"
 #include "dq_locator.h"
 #include "dq_log.h"
+#include "dq_controls.h"
 #include "dq_map.h"
 #include "dq_tile.h"
 
@@ -242,6 +243,8 @@ void hero_inventory_list(struct Hero* hero_)
 
 void hero_move_hero(struct Actor* h_, struct AreaMap* m_)
 {
+    int hero_move = system_locator->get_control()->get_move();
+    system_locator->get_control()->reset_move();
     // Don't allow actor movement in menus
     // if(in_menu)
     // {
@@ -259,7 +262,7 @@ void hero_move_hero(struct Actor* h_, struct AreaMap* m_)
         free(d_);
         h_->_idle_time = 0;
 
-        hero_move = 0;
+        // hero_move = 0;
     }
 
     hero_update(h_);
