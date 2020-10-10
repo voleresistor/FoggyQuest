@@ -17,15 +17,6 @@ struct ControlService {
     int (*get_move)(void);
     void (*handle_input)(void);
     void (*load_controls)(char ctrl_conf[15]);
-
-    // void (*action_unbound)(void);
-    // void (*action_select)(void);
-    // void (*action_cancel)(void);
-    // void (*action_interact)(void);
-    // void (*action_right)(void);
-    // void (*action_left)(void);
-    // void (*action_down)(void);
-    // void (*action_up)(void);
 };
 
 /* Hero movement */

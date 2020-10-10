@@ -7,7 +7,7 @@
 #include <stdlib.h>
 
 #include "dq_locator.h"
-#include "dq_log.h"
+// #include "dq_log.h"
 // #include "dq_control.h"
 // #include "dq_render.h"
 // #include "dq_audio.h"
@@ -35,10 +35,10 @@ extern void new_locator(void)
     system_locator->get_control = &get_control;
     control_service = NULL;
 
-    // /* Rendering */
-    // system_locator->provide_render = &provide_render;
-    // system_locator->get_render = &get_render;
-    // render_service = NULL;
+    /* Rendering */
+    system_locator->provide_render = &provide_render;
+    system_locator->get_render = &get_render;
+    render_service = NULL;
 
     // /* Audio */
     // system_locator->provide_audio = &provide_audio;

@@ -11,7 +11,7 @@
 
 struct LogService;
 struct ControlService;
-// struct RenderService;
+struct RenderService;
 // struct AudioService;
 
 /*
@@ -24,13 +24,13 @@ struct Locator {
     /* Providers */
     void (*provide_log)(struct LogService* log);
     void (*provide_control)(struct ControlService* control);
-    // void (*provide_render)(struct RenderService* render);
+    void (*provide_renderer)(struct RenderService* render);
     // void (*provide_audio)(struct AudioService* audio);
 
     /* Access */
     struct LogService* (*get_log)(void);
     struct ControlService* (*get_control)(void);
-    // struct RenderService* (*get_render)(void);
+    struct RenderService* (*get_renderer)(void);
     // struct AudioService* (*get_service)(void);
 };
 
@@ -39,7 +39,7 @@ struct Locator* system_locator;
 /* Services */
 static struct LogService* log_service;
 static struct ControlService* control_service;
-// static struct RenderService* control_service;
+static struct RenderService* render_service;
 // static struct AudioService* audio_service;
 
 /*
